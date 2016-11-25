@@ -1,3 +1,26 @@
+results_irf/**
+results_sim/**
+model/all_models/
+model/all_models.m
+*_steadystate2.m
+*_static.m
+*_dynamic.m
+*_set_auxiliary_variables.m
+model/dynareOBCTemp*
+*deleteThis*
+model/~*
+*.asv
+*.bak
+*.log
+*.db
+*.ini
+*.zip
+*.eps
+*.jnl
+*.txt
+*.mat
+
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

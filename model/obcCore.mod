@@ -1,0 +1,30 @@
+# kappa = kappaSS;
+# lag_R = exp( r(-1) );
+# lead_R = exp( r(+1) );
+
+# lag_R_TIMES_B = exp( r_PLUS_b(-1) );
+# B = exp( r_PLUS_b - r );
+# JK = exp( jK );
+# lead_JK = exp( jK(+1) );
+# MK = exp( mK );
+# lead_MK = exp( mK(+1) );
+# JB = exp( jB );
+# lead_JB = exp( jB(+1) );
+# lambdaX = (1-gam)*(JK-JB)/(1-(1-gam)*(JK-JB));
+# lead_lambdaX = (1-gam)*(lead_JK-lead_JB)/(1-(1-gam)*(lead_JK-lead_JB));
+# lambdaD = (1-gam)*(1+lambdaX)*JB-1; 
+# lead_lambdaD = (1-gam)*(1+lead_lambdaX)*lead_JB-1; 
+# MB = (1+lambdaD)*lag_R;
+# lead_MB = (1+lead_lambdaD)*R;
+# lambdaE = kappa * ( 1 + lambdaX ) - ( 1 - kappa ) * lambdaD;
+D = (1-kappa)*E + RK*lag_S/Pi - S - lag_R_TIMES_B/Pi + B;
+# N = S - B;
+# D_rate = D/N;
+# E_rate = E/N;
+
+MK = (1+lambdaD)*RK - lambdaX*(Theta-1)*(1-delta)*Pi*psi*Q/lag_Q;
+JK = lead_Lambda * lead_MK / lead_Pi;
+JB = lead_Lambda * lead_MB / lead_Pi;
+JK = max(JB, ( (1-gam)*JB*B + kappa*E + S + (Theta-1)*lag_S*(1-delta)*psi*Q/lag_Q ) / ( (1-gam)*S ) );
+D = max(0, E +  B/(1+lambdaX) - (1-gam)*JK*S + MK*lag_S/Pi -  (1+lambdaD)*lag_R_TIMES_B/Pi  );
+E = max(0, D + (1-gam)*JK*S - MK*lag_S/Pi + (1+lambdaD)*lag_R_TIMES_B/Pi - (kappa/(1-kappa) + 1/(1+lambdaX))*B );
