@@ -5,14 +5,14 @@ clear;% close all;
 % 1 if calling run from multiple_run.m, 0 otherwise
 mult_run = 0;
 % 1 = simulation, 2 = irf
-sim_type = 2;
+sim_type = 1;
 % other
 number_of_runs = 1;
 % dynareOBC options 1: SlowIRF/no cubature, 2: FastIRF/Fast cubature, 3:
 % FastIRF/no cubature, 4: FastIRF/default cubature, 5: FastIRF QuasiMC
 %opts.dynareOBC_irf_options_1 = ' SlowIRFs FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=60 NoCubature omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FastCubature FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-opts.dynareOBC_irf_options_1 = '  FastCubature OrderOverride=3 FirstOrderConditionalCovariance shockscale=-3 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
+opts.dynareOBC_irf_options_1 = '  NoCubature OrderOverride=3 FirstOrderConditionalCovariance shockscale=-3 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 
@@ -29,20 +29,20 @@ if mult_run == 0
 models_to_run = [ 6 ];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
-utility_type = 5;
+utility_type = 1;
 % 1 = KQ, 2 = delta
-shock_choice = 4;
+shock_choice = 1;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
-opts.mat_file_string_1 = '_irf_epsA';
+opts.mat_file_string_1 = '_irfs_order1_X3_slow_phi2_shocksPsiA_habitC90_habitH0_nonsepUtil';
 opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 
 % Parameters
 parameter_Phi = 2;
-parameter_habits_C = 0;
+parameter_habits_C = 90;
 parameter_habits_H = 0;
 elseif mult_run == 1
 load('mult.mat')
@@ -62,8 +62,8 @@ end
 
 % Parameters
 parameter_sigma_g = -.05;
-parameter_sigma_a = -.01; 
-%parameter_sigma_a = -.0005; 
+parameter_sigma_a = -.01;
+%parameter_sigma_a = -.0005;
 parameter_sigma_delta = .9;
 parameter_sigma_psi = -.1;
 parameter_sigma_psi = -.005;
@@ -75,7 +75,7 @@ parameter_Theta = 0.80381;
 parameter_kappa = 0.05;
 parameter_kappa_new = .1;
 parameter_nubar = 400;
-   
+
 parameter_gamR = 0.9;
 parameter_gamPi = 2;
 parameter_gamY = 0.4;
@@ -124,19 +124,23 @@ for ii=1:numberModels
     fid_adj = fopen( 'adj_type.mod', 'wt' );
     fprintf( fid_adj, '@#define adj_type = %d\n', adj_type);
     fclose(fid_adj);
-    
+
 %     if models_to_run(ii) == 2
 %         try
 %         movefile('GKQ_steadystate.m','all_models_steadystate.m')
 %         end
 %     end
-    
+
     try
-        if models_to_run(ii) == 2
-            eval(strcat('dynareOBC gk ',char(opts.dynareOBC_options(jj,:)),';'));
-        else
-            eval(strcat('dynareOBC all_models ',char(opts.dynareOBC_options(jj,:)),';'));
-        end
+      if models_to_run(ii) == 2
+        eval(strcat('dynareOBC gk.mod ',char(opts.dynareOBC_options(jj,:)),';'));
+      elseif models_to_run(ii) == 6
+        eval(strcat('dynareOBC obc.mod ',char(opts.dynareOBC_options(jj,:)),';'));
+      elseif models_to_run(ii) == 1
+        eval(strcat('dynareOBC rbc.mod ',char(opts.dynareOBC_options(jj,:)),';'));
+      else
+        disp('Valid model not chosen!')
+      end
     load('loop.mat')
     fid_log = fopen( '../mutliple_log.txt', 'At' );
     log_txt = strcat(char(strcat('Loop ',num2str(opts.loop_num),'/',num2str(opts.total_loops),': ',opts.models(models_to_run(ii),:),opts.mat_file_string(jj,:))) , ' run ok!\n');
