@@ -17,9 +17,9 @@ end
 
 load('../opts.mat');
 if utility_type == 5
-x0=[1.1 ,-.5];
+x0=[1.1 ,log(0.3)];
 else 
-x0=[log(1.5) log(0.6)];
+x0=[log(1.5) log(0.3)];
 end
 options = optimset('TolFun',1e-9,'TolX',1e-9,'MaxIter', 5000, 'MaxFunEvals', 5000, 'Display','off' );
 [x,fval] =fsolve(@s_fun_gk,x0,options);

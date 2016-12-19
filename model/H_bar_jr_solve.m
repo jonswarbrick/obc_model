@@ -10,7 +10,7 @@ for i = 1:NumberOfParameters                                  % Loop...
   eval([ paramname ' = M_.params(' int2str(i) ');']);         %    Get the value of parameter i.
 end
 
-C_over_Y = ( 1 - gySS - deltaSS * K_over_Y );
+C_over_Y = ( 1 - deltaSS * K_over_Y );
 H = H_bar;
 Y = ( H_bar ) * K_over_Y ^ ( alp / ( 1 - alp ) );
 C = C_over_Y*Y;

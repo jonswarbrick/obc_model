@@ -1,74 +1,44 @@
-
-
-
-global M_
- 
-NumberOfParameters = M_.param_nbr;                            % Number of deep parameters.
-for i = 1:NumberOfParameters                                  % Loop...
-  paramname = deblank(M_.param_names(i,:));                   %    Get the name of parameter i. 
-  eval([ paramname ' = M_.params(' int2str(i) ');']);         %    Get the value of parameter i.
-end                                                           % End of the loop.  
-check = 0;
-
-x0=[log(1.5) log(0.6)];
-options = optimset('TolFun',1e-9,'TolX',1e-9,'MaxIter', 100, 'MaxFunEvals', 1000, 'Display','iter' );
-[x,fval] =fsolve(@s_fun_test,x0,options);
-
 load('../opts.mat');
 
-disp = 0;
-pi = 0;
-mc = 0;
-q = 0;
-Q = 1;
-R = 1 / betta;
-r = log( R );
-a = log( Ass );
-logit_delta = logit_deltaSS;
+varrho=2.6;
+alp=0.3;
+zzeta=7.0;
+betta=0.995;
+deltabar=0.025;
+logit_deltabar = log(deltabar/(1-deltabar));
+sigma_c=parameter_sigma_c;
+gam_jr = parameter_gam_jr;
+theta_jr = parameter_theta_jr;
+sigma_h=parameter_sigma_h;
+psi_h=parameter_psi_h;
+chi = .7;
+epsilonC = parameter_habits_C;
+epsilonH = parameter_habits_H;
+Ass=1;
+rhoA=parameter_rhoA;
+rhodelta=parameter_rhodelta;
+rho_psi = parameter_rho_psi;
 
-K_by_Y = exp( x(1) );
-H_bar = exp( x(2) );
+sigmaB=0.975;
+xiB=0.00017;
+epsilon = -2;
+kappa_GK = 13;
 
-H = H_bar;
-R = 1 / betta;
-Z = alp/K_by_Y;
-I_by_Y = deltaSS * K_by_Y;
-C_by_Y = 1 - gySS - I_by_Y;
-Y = ( Ass * H ) * K_by_Y ^ ( alp / ( 1 - alp ) );
-K = K_by_Y * Y;
-RK = (Z + (1 - deltaSS));
-S = K;
-spread = RK - R;
-xE = -epsilon/kappa_GK;
-Thetax = Theta*(1 + epsilon*xE + kappa_GK*xE^2/2);
-N = ((sigmaB + xiB)*RK - R*sigmaB)*S/(1-R*sigmaB);
-phi_GK = S/N;
-Omega = 1 - sigmaB + sigmaB*Thetax*phi_GK;	
-mus = betta*Omega*spread;	
-nub = Omega;
-C = C_by_Y*Y;
+gam=1e-8;
+kappaSS=parameter_kappa;
 
-g = log ( GSS );
-k = log( K );
-c = log( C_by_Y * Y );
-inv = log( I_by_Y * Y );
-I = I_by_Y * Y;
+Theta=parameter_Theta;
+Phi=parameter_Phi;
+sigma_a = parameter_sigma_a;
+sigma_psi = parameter_sigma_psi;
+sigma_delta = parameter_sigma_delta;
 
-RK = (Z + (1 - deltaSS));
-RE = R;
-QE =Z/(RE  - (1 - deltaSS));
-S = K;
-mue = 0;
-spread = RK - R;
-xE = -epsilon/kappa_GK;
-Thetax = Theta*(1 + epsilon*xE + kappa_GK*xE^2/2);
-E = xE*S/QE;
-N = ((sigmaB + xiB)*RK - R*sigmaB)*S/(1-R*sigmaB);
-phi_GK = S/N;
-Omega = 1 - sigmaB + sigmaB*Thetax*phi_GK;	
-mus = betta*Omega*spread;	
-nub = Omega;
-D = (1-sigmaB)*(RK*S-R*(S-N-QE*E) - RE*QE*E); 
-D_rate = D/N;
-E_rate = E/N;
-psi = 1;
+%logit_deltaSS = logit_deltabar -  sigma_delta/(1-rhodelta);
+logit_deltaSS = logit_deltabar;
+deltaSS = 1/(1+exp(-logit_deltaSS));
+
+
+H_bar  = call_Hbar_gk
+K_by_Y  = call_KbyY_gk;
+
+C_bar = ( 1 - deltaSS * K_by_Y )*( Ass * H_bar ) * K_by_Y ^ ( alp / ( 1 - alp ) );

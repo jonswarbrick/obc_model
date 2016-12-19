@@ -4,7 +4,7 @@
 @#include "adj_type.mod"
 
 // Required
-var k a g logit_delta q c r pi mc disp psi;
+var k a logit_delta q c r pi mc disp psi;
 // For analysis
 var spread inv Y;
 // with habits:
@@ -16,35 +16,34 @@ var Xjr lambdaX;
 
 @#include "shocks_1.mod"
 
-parameters gySS varrho alp zzeta betta deltaSS sigma_c rhodelta rhoG rhoA
-Ass Phi sigmaB xiB Theta kappaSS logit_deltaSS epsilon kappa_GK gam
-sigma_g sigma_a sigma_psi sigma_delta deltabar logit_deltabar
+parameters varrho alp zzeta betta deltaSS sigma_c rhodelta rhoA
+rho_psi Ass Phi sigmaB xiB Theta kappaSS logit_deltaSS epsilon kappa_GK gam
+sigma_a sigma_psi sigma_delta deltabar logit_deltabar
 chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr ;
 
 load('../opts.mat');
 
-gySS=0.2;
-varrho=0.684;
+varrho=2.6;
 alp=0.3;
 zzeta=7.0;
 betta=0.995;
 deltabar=0.025;
 logit_deltabar = log(deltabar/(1-deltabar));
-sigma_c=2.0;
+sigma_c=parameter_sigma_c;
+gam_jr = parameter_gam_jr;
+theta_jr = parameter_theta_jr;
 sigma_h=parameter_sigma_h;
 psi_h=parameter_psi_h;
 chi = .7;
-gam_jr = 0.001;
-theta_jr = 1.5;
 epsilonC = parameter_habits_C;
 epsilonH = parameter_habits_H;
 Ass=1;
 rhoA=parameter_rhoA;
 rhodelta=parameter_rhodelta;
-rhoG=parameter_rhoG;
+rho_psi = parameter_rho_psi;
 
 sigmaB=0.975;
-xiB=0.00017;
+xiB=0.003;
 epsilon = -2;
 kappa_GK = 13;
 
@@ -53,7 +52,6 @@ kappaSS=parameter_kappa;
 
 Theta=parameter_Theta;
 Phi=parameter_Phi;
-sigma_g = parameter_sigma_g;
 sigma_a = parameter_sigma_a;
 sigma_psi = parameter_sigma_psi;
 sigma_delta = parameter_sigma_delta;
@@ -71,7 +69,7 @@ var prodR@{lag} lagD@{lag} SZ@{lag};
 var E_rate D_rate;
 
 
-parameters C_bar H_bar GSS nubar kappa_new;
+parameters C_bar H_bar nubar kappa_new;
 
 nubar = parameter_nubar;
 kappa_new = parameter_kappa_new;
@@ -92,26 +90,23 @@ MD@{lag}_bar = SZ@{lag}_bar*(1 / betta)^@{lag}*( (1-gam)*(1-Theta) )/( (1-(1-gam
 @#endfor
 
 @#if utility_type == 1
-    H_bar = 1 / ( 1 + varrho/(1-varrho) *((1-epsilonC)/(1-epsilonH))* ( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) );
+    H_bar = 1 / ( 1 + varrho/(1-varrho) *((1-epsilonC)/(1-epsilonH))* ( 1 - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) );
 @#endif
 @#if utility_type == 2
     H_bar  = call_csolve_new_obc;
 @#endif
 @#if utility_type == 3
-    H_bar  =  ( 1 / ( (1 - epsilonH)^(psi_h) * (1 - epsilonC)*( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) ) )^(1/(psi_h+1));
+    H_bar  =  ( 1 / ( (1 - epsilonH)^(psi_h) * (1 - epsilonC)*( 1 - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) ) )^(1/(psi_h+1));
 @#endif
 @#if utility_type == 4
-    H_bar = 1 / ( 1 + varrho/(1-varrho) * ( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) );
+    H_bar = 1 / ( 1 + varrho/(1-varrho) * ( 1 - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) / (1-alp) );
 @#endif
 @#if utility_type == 5
     H_bar = call_csolve_jr_obc;
     %H_bar = (((1-alp)*((alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ))^(alp/(1-alp)))^(1-gam_jr) ) / ( varrho*( (1-alp)*gam_jr*(( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ))^(gam_jr-1) + (theta_jr+1-gam_jr)*(( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ))^gam_jr) ) )^(1/theta_jr);
 @#endif
 
-GSS = gySS*( Ass * H_bar )*(alp/(1 / ( 1 - gam ) / betta - ( 1 -  deltaSS ) / ( 1 - gam ) + gam * ( betta * Theta * ( 1 - deltaSS ) )))^( alp / ( 1 - alp ) );
-
-C_bar = ( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) * ( Ass * H_bar )*(alp/(1 / ( 1 - gam ) / betta - ( 1 -  deltaSS ) / ( 1 - gam ) + gam * ( betta * Theta * ( 1 - deltaSS ) )))^( alp / ( 1 - alp ) );
-
+C_bar = ( 1 - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) * ( Ass * H_bar )*(alp/(1 / ( 1 - gam ) / betta - ( 1 -  deltaSS ) / ( 1 - gam ) + gam * ( betta * Theta * ( 1 - deltaSS ) )))^( alp / ( 1 - alp ) );
 
 model;
 
@@ -131,8 +126,6 @@ model;
 # Q = exp( q );
 # lead_Q = exp( q(+1) );
 # lag_Q = exp( q(-1) );
-# G = exp( g );
-# lead_G = exp( g(+1) );
 # Pi = exp( pi );
 # lead_Pi = exp( pi(+1) );
 # Disp = exp( disp );
@@ -141,13 +134,13 @@ model;
 
 @#if adj_type == 1
 % CEE
-Y = C+I*(1-Phi*(1-I/lag_I)^2)+G;
-# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2) + lead_G;
+Y = C+I*(1-Phi*(1-I/lag_I)^2);
+# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2);
 @#endif
 @#if adj_type == 2
 % Ireland (2003) costs
-Y = C+I+G-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
-# lead_Y = lead_C + lead_I + lead_G - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
+Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
+# lead_Y = lead_C + lead_I - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
 @#endif
 
 # YW = Y*exp(disp);
@@ -302,7 +295,6 @@ steady_state_model;
     R_ = 1 / betta;
     r = log( R_ );
     a = log( Ass );
-    g = log( GSS );
     lambdaD_ = 0;
     lambdaB_ = gam*(1-(1-gam)*(1-Theta));
     SZ7 = lambdaB_;
@@ -325,7 +317,7 @@ steady_state_model;
     Z_ = RK_-1+deltaSS;
     K_over_Y = alp/Z_;
     I_over_Y = deltaSS * K_over_Y;
-    C_over_Y = 1 - gySS - I_over_Y;
+    C_over_Y = 1 - I_over_Y;
     H = H_bar;
     H_ = H;
     Y_ = ( Ass * H_ ) * K_over_Y ^ ( alp / ( 1 - alp ) );

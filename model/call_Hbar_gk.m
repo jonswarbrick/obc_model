@@ -17,11 +17,11 @@ end
 
 load('../opts.mat');
 if utility_type == 5
-x0=[1.1 ,-.5];
+x0=[1.1 , log(0.3)];
 else 
-x0=[log(1.5) log(0.6)];
+x0=[log(1.5) log(0.3)];
 end
-options = optimset('TolFun',1e-9,'TolX',1e-9,'MaxIter', 1000, 'MaxFunEvals', 1000, 'Display','off' );
+options = optimset('TolFun',1e-9,'TolX',1e-9,'MaxIter', 1000, 'MaxFunEvals', 1000, 'Display','iter' );
 [x,fval] =fsolve(@s_fun_gk,x0,options);
 
 K_by_Y = exp( x(1) );

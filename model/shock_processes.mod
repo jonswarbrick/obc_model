@@ -1,10 +1,9 @@
 
 a-log(Ass) = rhoA*(a(-1)-log(Ass))+sigma_a*epsA;
-%g-log(GSS) = rhoG*(g(-1)-log(GSS))-sigma_g*epsG;
-g = log(GSS);
 
 @#if shock_choice == 1
-    psi = ( exp(sigma_psi*eps_psi^3) );
+    psi = ( exp(sigma_psi*eps_psi^3) )*(psi(-1))^(rho_psi);
+    %psi = ( exp(sigma_psi*eps_psi) );
     logit_delta = logit_deltabar;
 @#endif
 @#if shock_choice == 2

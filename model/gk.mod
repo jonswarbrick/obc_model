@@ -4,7 +4,7 @@
 @#include "shock_choice.mod"
 @#include "adj_type.mod"
 
-var k a m g q logit_delta c r inv spread psi Y H D_rate;
+var k a m q logit_delta c r inv spread psi Y H D_rate;
 
 @#if shock_choice == 1
     varexo epsA eps_psi;
@@ -21,36 +21,35 @@ var k a m g q logit_delta c r inv spread psi Y H D_rate;
 var Xjr lambdaX;
 @#endif
 
-parameters gySS varrho alp zzeta betta deltaSS sigma_c rhodelta rhoG rhoA Ass Phi
-sigmaB xiB Theta kappaSS logit_deltaSS  epsilon kappa_GK gam
-sigma_g sigma_a sigma_psi sigma_delta deltabar logit_deltabar
+parameters varrho alp zzeta betta deltaSS sigma_c rhodelta rhoA Ass Phi
+rho_psi sigmaB xiB Theta kappaSS logit_deltaSS  epsilon kappa_GK gam
+sigma_a sigma_psi sigma_delta deltabar logit_deltabar
 chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr ;
-parameters C_bar K_by_Y H_bar GSS;
+parameters C_bar K_by_Y H_bar;
 
 load('../opts.mat');
 
-gySS=0.2;
-varrho=0.684;
+varrho=2.6;
 alp=0.3;
 zzeta=7.0;
 betta=0.995;
 deltabar=0.025;
 logit_deltabar = log(deltabar/(1-deltabar));
-sigma_c=2.0;
+sigma_c=parameter_sigma_c;
+gam_jr = parameter_gam_jr;
+theta_jr = parameter_theta_jr;
 sigma_h=parameter_sigma_h;
 psi_h=parameter_psi_h;
 chi = .7;
-gam_jr = 0.001;
-theta_jr = 1.5;
 epsilonC = parameter_habits_C;
 epsilonH = parameter_habits_H;
 Ass=1;
 rhoA=parameter_rhoA;
 rhodelta=parameter_rhodelta;
-rhoG=parameter_rhoG;
+rho_psi = parameter_rho_psi;
 
 sigmaB=0.975;
-xiB=0.00017;
+xiB=0.003;
 epsilon = -2;
 kappa_GK = 13;
 
@@ -59,7 +58,6 @@ kappaSS=parameter_kappa;
 
 Theta=parameter_Theta;
 Phi=parameter_Phi;
-sigma_g = parameter_sigma_g;
 sigma_a = parameter_sigma_a;
 sigma_psi = parameter_sigma_psi;
 sigma_delta = parameter_sigma_delta;
@@ -72,8 +70,7 @@ deltaSS = 1/(1+exp(-logit_deltaSS));
 H_bar  = call_Hbar_gk;
 K_by_Y  = call_KbyY_gk;
 
-C_bar = ( 1 - gySS - deltaSS * K_by_Y )*( Ass * H_bar ) * K_by_Y ^ ( alp / ( 1 - alp ) );
-GSS = gySS*( Ass * H_bar ) * K_by_Y ^ ( alp / ( 1 - alp ) );
+C_bar = ( 1 - deltaSS * K_by_Y )*( Ass * H_bar ) * K_by_Y ^ ( alp / ( 1 - alp ) );
 
 
 model;
@@ -94,17 +91,15 @@ model;
     # Q = exp( q );
     # lead_Q = exp( q(+1) );
     # lag_Q = exp( q(-1) );
-    # G = exp( g );
-    # lead_G = exp( g(+1) );
 @#if adj_type == 1
 % CEE
-Y = C+I*(1-Phi*(1-I/lag_I)^2)+G;
-# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2) + lead_G;
+Y = C+I*(1-Phi*(1-I/lag_I)^2);
+# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2);
 @#endif
 @#if adj_type == 2
 % Ireland (2003) costs
-Y = C+I+G-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
-# lead_Y = lead_C + lead_I + lead_G - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
+Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
+# lead_Y = lead_C + lead_I - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
 @#endif
 
 
@@ -198,13 +193,12 @@ steady_state_model;
     R_ = 1 / betta;
     r = log( R_ );
     a = log( Ass );
-    g = log( GSS );
     logit_delta = logit_deltaSS;
     psi = 1;
 
     Z_ = alp/K_by_Y;
     I_by_Y = deltaSS * K_by_Y;
-    C_by_Y = 1 - gySS - I_by_Y;
+    C_by_Y = 1 - I_by_Y;
     H = H_bar;
     Y = ( Ass * H ) * K_by_Y ^ ( alp / ( 1 - alp ) );
     K_ = K_by_Y * Y;
