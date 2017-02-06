@@ -6,7 +6,7 @@ variables = {'Y','I','C','D','E','Q','spread'};
 
 % RBC
 %load('results_sim/rbc_paper.mat')
-load('results_sim/rbc_order3_QMC_default.mat')
+load('results_sim/newobc_order3_QMC_default.mat')
 spread_element = strmatch('spread',M_.endo_names,'exact');
 Y_element = strmatch('Y',M_.endo_names,'exact');
 I_element = strmatch('inv',M_.endo_names,'exact');
