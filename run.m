@@ -12,7 +12,7 @@ end
 % 1 if calling run from multiple_run.m, 0 otherwise
 mult_run = 0;
 % 1 = simulation, 2 = irf
-sim_type = 1;
+sim_type = 2;
 % other
 number_of_runs = 1;
 % dynareOBC options 1: SlowIRF/no cubature, 2: FastIRF/Fast cubature, 3:
@@ -42,7 +42,7 @@ shock_choice = 1;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
-opts.mat_file_string_1 = '_order3_QMC_default';
+opts.mat_file_string_1 = '_order3_X1A_fastIRF_nocubature_phi2_CEE_shocksPsiA_habitC0_habitH0_JRutilstick0';
 opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
@@ -69,21 +69,26 @@ end
 
 % Parameters
 % % RBC: 
-%     parameter_sigma_a = 0.0037324519037531;
-%     parameter_rhoA = 0.8079;
-%     parameter_Theta = 0.9;
-%     parameter_sigma_psi = 0;
+    parameter_sigma_a = 0.0037324519037531;
+    parameter_rhoA = 0.8079;
+    parameter_Theta = 0.9;
+    parameter_sigma_psi = 0;
 % % GK: 
 %     parameter_sigma_a = 0.0034562528170361;
 %     parameter_rhoA = 0.5862;
 %     parameter_Theta = 0.9355;
 %     parameter_sigma_psi = 0;
 % % OBC: 
-    parameter_sigma_a = 0.0034069746056350;
-    parameter_sigma_a = 0.00341129746056350; % nocub
-    parameter_rhoA = 0.65;
-    parameter_Theta = 0.6;
-    parameter_sigma_psi = 0.00045;
+%     parameter_sigma_a = 0.0034069746056350;
+%     parameter_sigma_a = 0.00341129746056350; % nocub
+%     parameter_rhoA = 0.65;
+%     parameter_Theta = 0.6;
+%     parameter_sigma_psi = 0.00045;
+
+% for IRFs that need equal shock sizes
+%parameter_sigma_psi = 0.0005;
+parameter_sigma_a = 0.00341129746056350/3;
+parameter_rhoA = 0.8079;
 
 
 parameter_rho_psi = 0;
