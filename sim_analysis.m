@@ -130,7 +130,7 @@ table_1 = table(corrY.data,corrY.obc,corrY.rbc,corrY.GKQ,sd.data,sd.obc,...
 
 disp('Moments and Cross Correlations');
 disp(table_1);
-av
+disp(av)
 
 
 %clear;
