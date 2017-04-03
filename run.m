@@ -83,9 +83,9 @@ elseif models_to_run==6
     parameter_rhoA = 0.65;
     parameter_Theta = 0.6;
     parameter_sigma_psi = 0.00045;
-    parameter_sigma_a = 0.0068;%0.0041962453482497;
+    parameter_sigma_a = 0.0075;%0.0041962453482497;
     parameter_rhoA = 0.4881442975496277;
-    parameter_Theta = 0.66;
+    parameter_Theta = 0.8;
     parameter_sigma_psi = 0;
 else
     parameter_sigma_a = 0.00358;
