@@ -8,6 +8,7 @@ model/all_models.m
 *_set_auxiliary_variables.m
 model/dynareOBCTemp*
 *deleteThis*
+*PleaseDelete*
 model/~*
 *.asv
 *.bak
