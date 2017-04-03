@@ -34,7 +34,7 @@ opts.dynareOBC_sim_options_3 = ' OrderOverride=3 NoCubature FirstOrderConditiona
 
 sim_type = 1;
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 1 ];
+models_to_run = [ 6 ];
 num_models = length(models_to_run);
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R

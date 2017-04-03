@@ -18,15 +18,19 @@ if models_to_run(current_model)==1
     options.init_val(3) = 0.9;
     options.init_val(4) = 0;
 elseif models_to_run(current_model)==2
-    options.init_val(1) = 0.0034562528170361;
-    options.init_val(2) = 0.5862;
-    options.init_val(3) = 0.7;
-    options.init_val(4) = 0.00045;
+    options.init_val(1) = 0.0033219449282209;
+    options.init_val(2) = 0.4881442975496277;
+    options.init_val(3) = 0.93;
+    options.init_val(4) = 0.0001;
 elseif models_to_run(current_model)==6
     options.init_val(1) = 0.00358;
     options.init_val(2) = 0.65;
     options.init_val(3) = 0.6;
-    options.init_val(4) = 0.00045;
+    options.init_val(4) = 0.00045;  
+    options.init_val(1) = 0.0041962453482497 ;
+    options.init_val(2) = 0.4881442975496277;
+    options.init_val(3) = 0.68;
+    options.init_val(4) = 0.0005;   
 end
     
 
@@ -35,7 +39,7 @@ options.target(2) = 0.914496282145410;
 options.target(3) = 0.00586903050657294;
 options.target(4) = 0.0018146;
 
-options.err_tol(1) = 0.0000025;
+options.err_tol(1) = 0.000005;
 options.err_tol(2) = 0.01;
 options.err_tol(3) = 0.00001;
 options.err_tol(4) = 0.0002;

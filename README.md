@@ -16,12 +16,10 @@ For solving and simulating, printing results and plotting figures:
 For calibration:
 - calibration.m - to calibrate multiple models (calling models/calibrate_parameters.m)
 - models/calibrate_parameters.m - to set up calibration (which parameters, intial values, step size, tolerance etc)
- 
+
 Main model files in folder 'model':
 models/rbc.mod
 models/gk.mod
 models/obc.mod
 models/nk.mod
 models/nkobc.mod
-
-
