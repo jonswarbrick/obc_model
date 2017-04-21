@@ -52,8 +52,8 @@ elseif utility_type == 5
     UH = - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * theta_jr*varrho*Xjr*H^(theta_jr-1);
     UC = (C - varrho*H^theta_jr*Xjr)^(-sigma_c);
     UX =  - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
-    lambdaX = UX / ( 1 - betta*( (1-gam_jr)*C^(-gam_jr) ) );
-    lambdaC = UC + lambdaX*gam_jr*C^(gam_jr-1);
+    lambdaX = UX / ( 1 - betta*( (1-gam_jr) ) );
+    lambdaC = UC + lambdaX*gam_jr;
 end
 
 y = [m*(1-betta*Omega*(RK-R)/Theta)-betta*Omega*R;

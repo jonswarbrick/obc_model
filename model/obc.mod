@@ -177,13 +177,15 @@ Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
 @#if utility_type == 5
     # lead_H = H(+1);
     # UH = - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * theta_jr*varrho*Xjr*H^(theta_jr-1);
+    # UX =  - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
     # UC = (C - varrho*H^theta_jr*Xjr)^(-sigma_c);
     # lead_UC = (lead_C - varrho*lead_H^theta_jr*Xjr(+1))^(-sigma_c);
-    # lambdaC = UC + lambdaX*gam_jr*C^(gam_jr-1);
-    # lead_lambdaC = lead_UC + lambdaX(+1)*gam_jr*lead_C^(gam_jr-1);
-    # UX =  - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
+    %   # lambdaC = UC + lambdaX*gam_jr*C^(gam_jr-1);
+    %   # lead_lambdaC = lead_UC + lambdaX(+1)*gam_jr*lead_C^(gam_jr-1);
+    # lambdaC = UC + lambdaX*gam_jr*Xjr/C;
+    # lead_lambdaC = lead_UC + lambdaX(+1)*gam_jr*Xjr(+1)/lead_C;
     Xjr = C^gam_jr * Xjr(-1)^(1-gam_jr);
-    lambdaX = UX + betta*( lambdaX(+1)*(1-gam_jr)*Xjr^(-gam_jr) );
+    lambdaX = UX + betta * (1-gam_jr) * lambdaX(+1) * Xjr(+1) / Xjr;
 @#endif
 
 # lead_Lambda = betta*lead_lambdaC/lambdaC;
@@ -203,8 +205,8 @@ Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
 # lead_MV = exp( mv(+1) );
 # lead_kappa = kappa(+1);
 # lead_Xi = (1-gam)*lead_Lambda*lead_MV*(1-kappa)/(1-lead_kappa);
-# lambdaB = (1-(1-gam)*(1-Theta))*(MV-1)/(MV-(1-kappa)*(1-(1-gam)*(1-Theta)));
-# lead_lambdaB = (1-(1-gam)*(1-Theta))*(lead_MV-1)/(lead_MV-(1-lead_kappa)*(1-(1-gam)*(1-Theta)));
+# lambdaB = (1-(1-gam)*(1-Theta))*(1-kappa)*(MV-1)/(MV-(1-kappa)*(1-(1-gam)*(1-Theta)));
+# lead_lambdaB = (1-(1-gam)*(1-Theta))*(1-lead_kappa)*(lead_MV-1)/(lead_MV-(1-lead_kappa)*(1-(1-gam)*(1-Theta)));
 
 @#for lag in [1:7]
 # MD@{lag} = SZ@{lag}*prodR@{lag}*( (1-gam)*(1-Theta) )/( (1-(1-gam)*(1-Theta)) - lambdaB );
@@ -328,7 +330,7 @@ steady_state_model;
     c = log( C_ );
     Xjr = C_;
     UX_ =  - (C_ - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
-    lambdaX = UX_ / ( 1 - betta*( (1-gam_jr)*C_^(-gam_jr) ) );
+    lambdaX = UX_ / ( 1 - betta*( (1-gam_jr) ) );
     sum_mD = mD1_ + mD2_ + mD3_ + mD4_ + mD5_ + mD6_ + mD7_;
     sum_MD = MD1_ + MD2_ + MD3_ + MD4_ + MD5_ + MD6_ + MD7_;
     AUXBD = sum_mD/(1+mV_*R_/(1-kappa));
