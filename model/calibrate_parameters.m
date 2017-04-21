@@ -1,58 +1,49 @@
 
 % Initialization
-options.num_par = 4;
+options.num_par = 3;
 
 % Calibration Detail %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sigma_a --> s.d.(Y)                                           %
 % rho_a --> AR(1) of Y                                          %
-% Theta --> mean(spread)                                        %
-% sigma_psi --> s.d.(spread)                                %
+% Theta --> s.d.(spread)                                        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-options.par = {'sigma_a' ; 'rho_a' ; 'Theta' ; 'sigma_psi'}; % order important
+options.par = {'sigma_a' ; 'rho_a' ; 'Theta'}; % order important
 
 if models_to_run(current_model)==1
     options.init_val(1) = 0.0037324519037531;
     options.init_val(2) = 0.8079;
     options.init_val(3) = 0.9;
-    options.init_val(4) = 0;
 elseif models_to_run(current_model)==2
     options.init_val(1) = 0.0033219449282209;
     options.init_val(2) = 0.4881442975496277;
     options.init_val(3) = 0.93;
-    options.init_val(4) = 0.0001;
 elseif models_to_run(current_model)==6
     options.init_val(1) = 0.00358;
     options.init_val(2) = 0.65;
     options.init_val(3) = 0.6;
-    options.init_val(4) = 0.00045;  
     options.init_val(1) = 0.0041962453482497 ;
     options.init_val(2) = 0.4881442975496277;
     options.init_val(3) = 0.68;
-    options.init_val(4) = 0.0005;   
 end
     
 
 options.target(1) = 0.0101462755522287;
 options.target(2) = 0.914496282145410;
-options.target(3) = 0.00586903050657294;
-options.target(4) = 0.0018146;
+options.target(3) = 0.0018146;
 
 options.err_tol(1) = 0.000005;
 options.err_tol(2) = 0.01;
-options.err_tol(3) = 0.00001;
-options.err_tol(4) = 0.0002;
+options.err_tol(3) = 0.0002;
 
 %options.err_tol(1) = 1;
 %options.err_tol(2) = 1;
-options.err_tol(3) = 1;
-options.err_tol(4) = 1;
+%options.err_tol(3) = 1;
 
 options.step(1) = 0.001;
 options.step(2) = 0.02;
 options.step(3) = 0.05;
-options.step(4) = 0.0005;
 %options.step = zeros(1,4);
 
 options.init_err_tol = options.err_tol;
@@ -62,7 +53,8 @@ options.prev_val = options.curr_val;
 parameter_sigma_a = options.curr_val(1);
 parameter_rhoA = options.curr_val(2);
 parameter_Theta = options.curr_val(3);
-parameter_sigma_psi = options.curr_val(4);
+
+parameter_sigma_psi = 0;
 
 parameter_rho_psi = 0;
 parameter_Phi = 2;
@@ -109,23 +101,20 @@ load('loop.mat');
 
 options.prev_realised(1) = std(Y);
 options.prev_realised(2) = y_ac(2);
-options.prev_realised(3) = mean(spread);
-options.prev_realised(4) = std(spread);
+options.prev_realised(3) = std(spread);
 options.curr_err(1) = std(Y)-options.target(1);
 options.curr_err(2) = y_ac(2)-options.target(2);
-options.curr_err(3) = mean(spread)-options.target(3);
-options.curr_err(4) = std(spread)-options.target(4);
+options.curr_err(3) = std(spread)-options.target(3);
 options.prev_err = options.curr_err;
             if models_to_run(current_model)==1
                 options.curr_err(3)=0;
-                options.curr_err(4)=0;
             end
             
-            err_mess = ['   Errors: ' , num2str(options.curr_err(1)),' ', num2str(options.curr_err(2)),' ', num2str(options.curr_err(3)),' ', num2str(options.curr_err(4)),' '];
+            err_mess = ['   Errors: ' , num2str(options.curr_err(1)),' ', num2str(options.curr_err(2)),' ', num2str(options.curr_err(3)),' '];
             values_mess = ['   sd(y) = ',num2str(options.prev_realised(1)),' | AC1(y) = ',num2str(options.prev_realised(2)),...
-                ' | mean(spread) = ',num2str(options.prev_realised(3)),' | sd(spread) = ',num2str(options.prev_realised(4)),];
+                ' | sd(spread) = ',num2str(options.prev_realised(3)),];
             calibs_mess = ['   sigma_A = ',num2str(options.curr_val(1)),' | rhoA = ',num2str(options.curr_val(2)),...
-                ' | Theta = ',num2str(options.curr_val(3)),' | sigma_psi = ',num2str(options.curr_val(4)),];
+                ' | Theta = ',num2str(options.curr_val(3)),];
             if models_to_run(current_model)==1
                     fid_log = fopen( 'calibrate_log_rbc_order3.txt', 'At' );
             elseif models_to_run(current_model)==2
@@ -167,7 +156,6 @@ while big_crit
                 options.step(1) = 0.001;
                 options.step(2) = 0.02;
                 options.step(3) = 0.05;
-                options.step(4) = 0.0005;
             end
             options.curr_val(ii) = max(0.00001,options.curr_val(ii)+options.step(ii));
             options.curr_val(ii) = min(options.curr_val(ii),.999);
@@ -177,9 +165,8 @@ while big_crit
             parameter_sigma_a = options.curr_val(1);
             parameter_rhoA = options.curr_val(2);
             parameter_Theta = options.curr_val(3);
-            parameter_sigma_psi = options.curr_val(4);
 
-            save('../opts.mat','parameter_sigma_a','parameter_rhoA','parameter_Theta','parameter_sigma_psi','-append');
+            save('../opts.mat','parameter_sigma_a','parameter_rhoA','parameter_Theta','-append');
             save('settings_file.mat','options');
             eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(options.or,:)),';'));
                  
@@ -199,15 +186,12 @@ while big_crit
             temp_prev_realised = options.prev_realised;
             options.prev_realised(1) = std(Y);
             options.prev_realised(2) = y_ac(2);
-            options.prev_realised(3) = mean(spread);
-            options.prev_realised(4) = std(spread);
+            options.prev_realised(3) = std(spread);
             options.curr_err(1) = std(Y)-options.target(1);
             options.curr_err(2) = y_ac(2)-options.target(2);
-            options.curr_err(3) = mean(spread)-options.target(3);
-            options.curr_err(4) = std(spread)-options.target(4);
+            options.curr_err(3) = std(spread)-options.target(3);
             if models_to_run(current_model)==1
                 options.curr_err(3)=0;
-                options.curr_err(4)=0;
             end
 
             cal_mess = ['>> ',char(opts.models(models_to_run(current_model))),' | ',options.par{ii},' calibration | Big loop ',num2str(options.jj),...
@@ -215,12 +199,12 @@ while big_crit
                 options.par{ii},' = ',num2str(options.curr_val(ii),'%.16f'),' | Target = ',num2str(options.target(ii)),' | Realised ',num2str(options.prev_realised(ii)),...
                 ' | Last error = ',num2str(options.prev_err(ii)),' | New error = ',num2str(options.curr_err(ii)),...
                 ' | AC1(y) = ',num2str(options.prev_realised(2))];
-            err_mess = ['   Errors: ' , num2str(options.curr_err(1)),' ', num2str(options.curr_err(2)),' ', num2str(options.curr_err(3)),' ', num2str(options.curr_err(4)),' '];
+            err_mess = ['   Errors: ' , num2str(options.curr_err(1)),' ', num2str(options.curr_err(2)),' ', num2str(options.curr_err(3)),' '];
             disp(cal_mess);
             values_mess = ['   sd(y) = ',num2str(options.prev_realised(1)),' | AC1(y) = ',num2str(options.prev_realised(2)),...
-                ' | mean(spread) = ',num2str(options.prev_realised(3)),' | sd(spread) = ',num2str(options.prev_realised(4)),];
+                ' | mean(spread) = ',num2str(options.prev_realised(3)),];
             calibs_mess = ['   sigma_A = ',num2str(options.curr_val(1)),' | rhoA = ',num2str(options.curr_val(2)),...
-                ' | Theta = ',num2str(options.curr_val(3)),' | sigma_psi = ',num2str(options.curr_val(4)),];
+                ' | Theta = ',num2str(options.curr_val(3)),];
             if models_to_run(current_model)==1
                 if options.or==1
                     fid_log = fopen( 'calibrate_log_rbc_order1.txt', 'At' );
