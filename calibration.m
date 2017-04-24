@@ -28,13 +28,13 @@ if exist('model/calibrate_log_obc_order3.txt','file') == 2
 delete('model/calibrate_log_obc_order3.txt')
 end
 
-opts.dynareOBC_sim_options_1 = ' OrderOverride=1 NoCubature FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
-opts.dynareOBC_sim_options_2 = ' OrderOverride=2 NoCubature FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
-opts.dynareOBC_sim_options_3 = ' OrderOverride=3 NoCubature FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_1 = ' FastCubature MILPSolver=cplex OrderOverride=1 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_2 = ' FastCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_3 = ' FastCubature MILPSolver=cplex OrderOverride=3 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 
 sim_type = 1;
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 1 ];
+models_to_run = [ 6 ];
 num_models = length(models_to_run);
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R

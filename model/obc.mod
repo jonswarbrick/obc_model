@@ -368,7 +368,7 @@ end;
 
 
 @#if sim_type == 1
-    stoch_simul( order = 2, irf = 0, periods = 1000 );
+    stoch_simul( order = 2, irf = 0, periods = 10000 );
 @#endif
 @#if sim_type == 2
     stoch_simul( nograph , replic = 500, order = 3, irf = 60, periods = 0 , irf_shocks = ( @#include "shocks_3.mod" ) );
