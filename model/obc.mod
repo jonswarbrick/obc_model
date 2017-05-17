@@ -3,12 +3,12 @@
 @#include "shock_choice.mod"
 @#include "adj_type.mod"
 
-// Required
-var k a logit_delta q c r pi mc disp psi;
-// For analysis
-var spread inv Y;
-// with habits:
-var H;
+var k a logit_delta q c r pi mc disp psi spread inv Y H b D mv nu kappa
+    E_rate D_rate;
+
+@#for lag in [1:7]
+var prodR@{lag} lagD@{lag} SZ@{lag};
+@#endfor
 
 @#if utility_type == 5
 var Xjr lambdaX;
@@ -19,7 +19,9 @@ var Xjr lambdaX;
 parameters varrho alp zzeta betta deltaSS sigma_c rhodelta rhoA
 rho_psi Ass Phi sigmaB xiB Theta kappaSS logit_deltaSS epsilon kappa_GK gam
 sigma_a sigma_psi sigma_delta deltabar logit_deltabar
-chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr ;
+chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr C_bar H_bar 
+nubar kappa_new lambdaB_bar SZ7_bar SZ6_bar SZ5_bar SZ4_bar SZ3_bar 
+SZ2_bar SZ1_bar MD1_bar MD2_bar MD3_bar MD4_bar MD5_bar MD6_bar MD7_bar;
 
 load('../opts.mat');
 
@@ -41,12 +43,10 @@ Ass=1;
 rhoA=parameter_rhoA;
 rhodelta=parameter_rhodelta;
 rho_psi = parameter_rho_psi;
-
 sigmaB=0.975;
 xiB=0.003;
 epsilon = -2;
 kappa_GK = 13;
-
 gam=1e-8;
 kappaSS=parameter_kappa;
 
@@ -60,22 +60,8 @@ sigma_delta = parameter_sigma_delta;
 logit_deltaSS = logit_deltabar;
 deltaSS = 1/(1+exp(-logit_deltaSS));
 
-//required
-var b D mv  nu kappa;
-@#for lag in [1:7]
-var prodR@{lag} lagD@{lag} SZ@{lag};
-@#endfor
-//analysis
-var E_rate D_rate;
-
-
-parameters C_bar H_bar nubar kappa_new;
-
 nubar = parameter_nubar;
 kappa_new = parameter_kappa_new;
-
-parameters lambdaB_bar SZ7_bar SZ6_bar SZ5_bar SZ4_bar SZ3_bar SZ2_bar
-SZ1_bar MD1_bar MD2_bar MD3_bar MD4_bar MD5_bar MD6_bar MD7_bar;
 
 lambdaB_bar = gam*(1-(1-gam)*(1-Theta));
 SZ7_bar = lambdaB_bar;
@@ -103,7 +89,6 @@ MD@{lag}_bar = SZ@{lag}_bar*(1 / betta)^@{lag}*( (1-gam)*(1-Theta) )/( (1-(1-gam
 @#endif
 @#if utility_type == 5
     H_bar = call_csolve_jr_obc;
-    %H_bar = (((1-alp)*((alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ))^(alp/(1-alp)))^(1-gam_jr) ) / ( varrho*( (1-alp)*gam_jr*(( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ))^(gam_jr-1) + (theta_jr+1-gam_jr)*(( 1 - gySS - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ))^gam_jr) ) )^(1/theta_jr);
 @#endif
 
 C_bar = ( 1 - deltaSS * alp/( ( 1/((1-gam)*betta*( ( 1 - gam*(1-( (1-gam)*betta*MD1_bar/(1+(1-gam)*betta*MD1_bar) ))*(1-(1-gam)*(1-Theta)) )/(1-gam) )) )-1+deltaSS ) ) * ( Ass * H_bar )*(alp/(1 / ( 1 - gam ) / betta - ( 1 -  deltaSS ) / ( 1 - gam ) + gam * ( betta * Theta * ( 1 - deltaSS ) )))^( alp / ( 1 - alp ) );
@@ -347,13 +332,6 @@ steady_state_model;
     spread = RK_ - R_;
 
     Y = Y_;
-    //I = exp(inv);
-    //C = exp(c);
-    //R = R_;
-    //K = K_;
-    //Q = 1;
-    //E = E_;
-    //B = B_;
     E_rate = E_/(K_-B_);
     D_rate = D/(K_-B_);
 end;

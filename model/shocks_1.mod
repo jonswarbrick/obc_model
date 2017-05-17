@@ -7,5 +7,5 @@
     varexo epsA epsdelta;
 @#endif
 @#if shock_choice == 4
-    varexo epsA epsG;
+    varexo epsA;
 @#endif

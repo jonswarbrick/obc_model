@@ -1,1 +1,1 @@
-@#define shock_choice = 1
+@#define shock_choice = 4
