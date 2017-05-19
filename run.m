@@ -12,7 +12,7 @@ end
 % 1 if calling run from multiple_run.m, 0 otherwise
 mult_run = 0;
 % 1 = simulation, 2 = irf
-sim_type = 2;
+sim_type = 1;
 % other
 number_of_runs = 1;
 % dynareOBC options 1: SlowIRF/no cubature, 2: FastIRF/Fast cubature, 3:
@@ -26,19 +26,19 @@ opts.dynareOBC_irf_options_1 = '  LPSolver=cplex NoCubature OrderOverride=2 Firs
 opts.dynareOBC_irf_options_2 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_3 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_4 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
-opts.dynareOBC_sim_options_1 = ' NoCubature MILPSolver=cplex OrderOverride=3 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_1 = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_2 = ' QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=0 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=1 omega=10000 CompileSimulationCode Sparse';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if mult_run == 0
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 6 ];
+models_to_run = [ 1 ];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
 % 1 = KQ, 2 = delta, 4 = epsA  (IRF -- epsA for all for simulation)
-shock_choice = 4;
+shock_choice = 1;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
@@ -48,9 +48,6 @@ opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 
 % Parameters
-parameter_Phi = 2;
-parameter_habits_C = 0;
-parameter_habits_H = 0;
 elseif mult_run == 1
 load('mult.mat')
 models_to_run = mult.models_to_run;
@@ -69,15 +66,15 @@ end
 
 % Parameters
 if models_to_run==1
-parameter_sigma_a = 0.0037324519037531;
-parameter_rhoA = 0.8079;
+parameter_sigma_a = 0.0059038615167123;
+parameter_rhoA = 0.95;
 parameter_Theta = 0.9;
 parameter_sigma_psi = 0;
 elseif models_to_run==2
-parameter_sigma_a = 0.0033219449282209;
-parameter_rhoA = 0.4881442975496277;
-parameter_Theta = 0.93;
-parameter_sigma_psi = 0.0001;
+parameter_sigma_a = 0.0056549153601962;
+parameter_rhoA = 0.95;
+parameter_Theta = 0.8449834740987057;
+parameter_sigma_psi = 0;
 elseif models_to_run==6
 % parameter_sigma_a = 0.003500638344089;
 % parameter_rhoA = 0.828157065533977;
@@ -188,18 +185,18 @@ for ii=1:numberModels
         else 
             disp('Valid model not chosen!')
         end
-        Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
-        I = (oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
-        [~,Y] = hpfilter(Y,1600);
-        spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
-        [y_ac,~,~] = autocorr(Y,1);
-        disp(horzcat('S.D. Y = ',num2str(std(Y)),'| Target = 0.010146'));
-        disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.914496'));
-        disp(horzcat('mean spread = ',num2str(mean(spread)),'| Target = 0.005869'));
-        disp(horzcat('S.D. spread = ',num2str(std(spread)),'| Target = 0.0018146'));
-        disp(horzcat('Investment skewness: ',num2str(skewness(I))));
-        disp(horzcat('Spread skewness: ',num2str(skewness(spread))));
-        disp(horzcat('Constraint binding in ',num2str(100*binding_periods),'% of periods'));
+%         Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
+%         I = (oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
+%         [~,Y] = hpfilter(Y,1600);
+%         spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
+%         [y_ac,~,~] = autocorr(Y,1);
+%         disp(horzcat('S.D. Y = ',num2str(std(Y)),'| Target = 0.010563'));
+%         disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.86255'));
+%         disp(horzcat('mean spread = ',num2str(mean(spread)),'| Target = 0.0057369'));
+%         disp(horzcat('S.D. spread = ',num2str(std(spread)),'| Target = 0.0017812    '));
+%         disp(horzcat('Investment skewness: ',num2str(skewness(I))));
+%         disp(horzcat('Spread skewness: ',num2str(skewness(spread))));
+%         disp(horzcat('Consantraint binding in ',num2str(100*binding_periods),'% of periods'));
     load('loop.mat')
     fid_log = fopen( '../mutliple_log.txt', 'At' );
     log_txt = strcat(char(strcat('Loop ',num2str(opts.loop_num),'/',num2str(opts.total_loops),': ',opts.models(models_to_run(ii),:),opts.mat_file_string(jj,:))) , ' run ok!\n');

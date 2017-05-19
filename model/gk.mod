@@ -49,7 +49,7 @@ rhodelta=parameter_rhodelta;
 rho_psi = parameter_rho_psi;
 
 sigmaB=0.975;
-xiB=0.003;
+xiB=0.0045;
 epsilon = -2;
 kappa_GK = 13;
 

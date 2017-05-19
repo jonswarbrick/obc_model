@@ -1,27 +1,63 @@
 close all;
 Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
-I = (oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
-[~,Y] = hpfilter(Y,1600);
+I = exp(oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
+[~,hp.Y] = hpfilter(Y,1600);
+[~,hp.I] = hpfilter(I./mean(I),1600);
 spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 K = exp((oo_.endo_simul(strmatch('k',M_.endo_names,'exact'),:)));
 Q = exp((oo_.endo_simul(strmatch('q',M_.endo_names,'exact'),:)));
+C = exp((oo_.endo_simul(strmatch('c',M_.endo_names,'exact'),:)));
+[~,hp.C] = hpfilter(C./mean(C),1600);
+if strcmp(dynareOBC_.BaseFileName,'obc')
 B = exp((oo_.endo_simul(strmatch('b',M_.endo_names,'exact'),:)));
+D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
+elseif strcmp(dynareOBC_.BaseFileName,'rbc')
+B = Q .* K;
+D_rate = zeros(1,length(Y));
+E_rate = zeros(1,length(Y));
+elseif strcmp(dynareOBC_.BaseFileName,'gk')
+B = Q .* K .* ( 1 -  Theta ./ ( exp((oo_.endo_simul(strmatch('m',M_.endo_names,'exact'),:))))); 
+D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
+E_rate = zeros(1,length(Y));
+end
 D = ((oo_.endo_simul(strmatch('D',M_.endo_names,'exact'),:)));
 N = Q.*K-B;
-[y_ac,~,~] = autocorr(Y,1);
-disp(horzcat('S.D. Y = ',num2str(std(Y)),'| Target = 0.010146'));
-disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.914496'));
-disp(horzcat('mean spread = ',num2str(mean(spread)),'| Target = 0.005869'));
-disp(horzcat('S.D. spread = ',num2str(std(spread)),'| Target = 0.0018146'));
+[y_ac,~,~] = autocorr(hp.Y,1);
+disp(horzcat('S.D. Y = ',num2str(std(hp.Y)),'| Target = 0.010563'));
+disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.86255'));
+disp(horzcat('mean spread = ',num2str(mean(spread)),'| Target = 0.0057369'));
+disp(horzcat('S.D. spread = ',num2str(std(spread)),'| Target = 0.0017812'));
 disp(horzcat('Investment skewness: ',num2str(skewness(I))));
 disp(horzcat('Spread skewness: ',num2str(skewness(spread))));
-disp(horzcat('Constraint binding in ',num2str(100*binding_periods),'% of periods'));
 disp(horzcat('Capital-asset ratio: ',num2str(mean(N./(Q.*K)))));
-D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
-kappa = ((oo_.endo_simul(strmatch('kappa',M_.endo_names,'exact'),:)));
-psi = ((oo_.endo_simul(strmatch('psi',M_.endo_names,'exact'),:)));
+
+% Table for paper
+variables = {'Y','I','C','D','E','spread'};
+data = [ hp.Y.*100 , hp.I.*100 , hp.C.*100 , D_rate'.*100 , E_rate'.*100 , spread'.*100  ];
+corr_coeff = corrcoef(data);
+moments = [ mean(data)' std(data)' skewness(data)' kurtosis(data)' ];
+
+paper_data = [ ...
+    corr_coeff(1,1) , corr_coeff(1,2) , corr_coeff(1,3) ,...
+    corr_coeff(1,4) , corr_coeff(1,5) , corr_coeff(1,6) ; ...
+    ( moments(:,2) )' ; ( moments(:,3) )' ]; 
+
+
+tab_paper = table(paper_data(:,1),paper_data(:,2),paper_data(:,3),...
+    paper_data(:,4),paper_data(:,5),paper_data(:,6),...
+    'VariableNames',variables,'RowNames',{'corr','sd','skew'});
+
+disp('**-------------------------------------------------------------------------------**');
+disp('Moments');
+disp(tab_paper);
+disp('**-------------------------------------------------------------------------------**');
+
 Y = ((oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
 R = exp((oo_.endo_simul(strmatch('r',M_.endo_names,'exact'),:)));
+if strcmp(dynareOBC_.BaseFileName,'obc')
+disp(horzcat('Constraint binding in ',num2str(100*binding_periods),'% of periods'));
+kappa = ((oo_.endo_simul(strmatch('kappa',M_.endo_names,'exact'),:)));
+psi = ((oo_.endo_simul(strmatch('psi',M_.endo_names,'exact'),:)));
 MV = exp((oo_.endo_simul(strmatch('mv',M_.endo_names,'exact'),:)));
 ZLB1 = ((oo_.endo_simul(strmatch('dynareOBCZeroLowerBounded1',M_.endo_names,'exact'),:)));
 ZLB2 = ((oo_.endo_simul(strmatch('dynareOBCZeroLowerBounded2',M_.endo_names,'exact'),:)));
@@ -98,6 +134,10 @@ subplot(plot_rows,plot_cols,2); plot(ZLB2(time_st:time_end)); title('dynareOBCZL
 subplot(plot_rows,plot_cols,3); plot(D(time_st:time_end)); title('ZLB LHS1');
 subplot(plot_rows,plot_cols,4); plot(ZLB_LHS2(time_st:time_end)); title('ZLB LHS2');
 subplot(plot_rows,plot_cols,5); plot(ZLB_RHS2(time_st:time_end)); title('ZLB RHS2 (lambdaB)');
+end
+
+
+
 %%
 % pi = 0;
 % mc = 0;

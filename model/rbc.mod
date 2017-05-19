@@ -19,7 +19,7 @@ var Xjr lambdaX;
 parameters varrho alp zzeta betta deltaSS sigma_c rhodelta rhoA
 rho_psi Ass Phi sigmaB xiB Theta kappaSS logit_deltaSS epsilon kappa_GK gam
 sigma_a sigma_psi sigma_delta deltabar logit_deltabar
-chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr ;
+chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr gy;
 
 load('../opts.mat');
 
@@ -41,6 +41,7 @@ Ass=1;
 rhoA=parameter_rhoA;
 rhodelta=parameter_rhodelta;
 rho_psi = parameter_rho_psi;
+gy = 0;
 
 sigmaB=0.975;
 xiB=0.003;
@@ -108,13 +109,15 @@ model;
 
 @#if adj_type == 1
 % CEE
-Y = C+I*(1-Phi*(1-I/lag_I)^2);
-# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2);
+%Y = (C+I*(1-Phi*(1-I/lag_I)^2))/(1-gy);
+%# lead_Y = (lead_C+lead_I*(1-Phi*(1-lead_I/I)^2))/(1-gy);
+Y = (C+I)/(1-gy);
+# lead_Y = (lead_C+lead_I)/(1-gy);
 @#endif
 @#if adj_type == 2
 % Ireland (2003) costs
-Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
-# lead_Y = lead_C + lead_I - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
+Y = (C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2)/(1-gy);
+# lead_Y = (lead_C + lead_I - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2)/(1-gy);
 @#endif
 
 # YW = Y*exp(disp);
@@ -224,7 +227,7 @@ steady_state_model;
     a = log( Ass );
     K_over_Y = alp/Z_;
     I_over_Y = deltaSS * K_over_Y;
-    C_over_Y = 1 - I_over_Y;
+    C_over_Y = 1 - gy - I_over_Y;
     Y_over_H = Ass * K_over_Y ^ ( alp / ( 1 - alp ) );
     W_ = (1-alp)*Y_over_H;
     H = H_bar;

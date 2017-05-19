@@ -12,12 +12,12 @@ options.num_par = 3;
 options.par = {'sigma_a' ; 'rho_a' ; 'Theta'}; % order important
 
 if models_to_run(current_model)==1
-    options.init_val(1) = 0.0037324519037531;
-    options.init_val(2) = 0.8079;
+    options.init_val(1) = 0.0059038615167123 ;
+    options.init_val(2) = 0.95;
     options.init_val(3) = 0.9;
 elseif models_to_run(current_model)==2
-    options.init_val(1) = 0.003023281049089;
-    options.init_val(2) = 0.658090101842995;
+    options.init_val(1) = 0.0068513695401358 ;
+    options.init_val(2) = 0.95;
     options.init_val(3) = 0.585227706178260;
 elseif models_to_run(current_model)==6
     options.init_val(1) = 0.003500638344089;
@@ -26,12 +26,12 @@ elseif models_to_run(current_model)==6
 end
     
 
-options.target(1) = 0.0101462755522287;
-options.target(2) = 0.914496282145410;
-options.target(3) = 0.0018146;
+options.target(1) = 0.010563;
+options.target(2) = 0.86255;
+options.target(3) = 0.0017812;
 
 options.err_tol(1) = 0.000005;
-options.err_tol(2) = 0.01;
+options.err_tol(2) = 0.15;
 options.err_tol(3) = 0.00002;
 
 %options.err_tol(1) = 1;
@@ -87,7 +87,7 @@ save('settings_file.mat','options');
 eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(3,:)),';'));
                  
 Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
-%[~,Y] = hpfilter(Y,1600);
+[~,Y] = hpfilter(Y,1600);
 spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 
 load('settings_file.mat');
@@ -168,7 +168,7 @@ while big_crit
             eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(options.or,:)),';'));
                  
             Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
-            %[~,Y] = hpfilter(Y,1600);
+            [~,Y] = hpfilter(Y,1600);
             spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 
             load('settings_file.mat');
