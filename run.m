@@ -12,28 +12,28 @@ end
 % 1 if calling run from multiple_run.m, 0 otherwise
 mult_run = 0;
 % 1 = simulation, 2 = irf
-sim_type = 1;
+sim_type = 2;
 % other
 number_of_runs = 1;
 % dynareOBC options 1: SlowIRF/no cubature, 2: FastIRF/Fast cubature, 3:
 % FastIRF/no cubature, 4: FastIRF/default cubature, 5: FastIRF QuasiMC
 %opts.dynareOBC_irf_options_1 = ' SlowIRFs FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=60 NoCubature omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FastCubature FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-opts.dynareOBC_irf_options_1 = '  LPSolver=cplex NoCubature OrderOverride=2 FirstOrderConditionalCovariance shockscale=1 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
+opts.dynareOBC_irf_options_1 = '  FastCubature OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 
 opts.dynareOBC_irf_options_2 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_3 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_4 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
-opts.dynareOBC_sim_options_1 = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_1 = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_2 = ' QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=0 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=1 omega=10000 CompileSimulationCode Sparse';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if mult_run == 0
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 1 ];
+models_to_run = [ 6 ];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
@@ -42,7 +42,7 @@ shock_choice = 1;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
-opts.mat_file_string_1 = '_order2_nocubature';
+opts.mat_file_string_1 = '_order2_fastcub';
 opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
@@ -76,13 +76,9 @@ parameter_rhoA = 0.95;
 parameter_Theta = 0.8449834740987057;
 parameter_sigma_psi = 0;
 elseif models_to_run==6
-% parameter_sigma_a = 0.003500638344089;
-% parameter_rhoA = 0.828157065533977;
-% parameter_Theta = 0.569692624538134;
-% parameter_sigma_psi = 0;
-parameter_sigma_a = 0.005498911695875;
+parameter_sigma_a = 0.005713680663713;
 parameter_rhoA = 0.95;
-parameter_Theta = 0.569692624538134;
+parameter_Theta = 0.520312681802055;
 parameter_sigma_psi = 0;
 else
 parameter_sigma_a = 0.00358;
@@ -93,13 +89,15 @@ end
 
 % compare the same shock processes for IRFs
 if sim_type == 2
-parameter_sigma_a = 0.0055408;
+%parameter_sigma_a = 0.0055408;
 parameter_rhoA = 0.95;
-parameter_sigma_psi = 0;%0.001;
+parameter_rho_psi = 0.66;
+parameter_sigma_psi = 0.00001;
+else
+parameter_rho_psi = 0;
 end
 
 
-parameter_rho_psi = 0;
 parameter_Phi = 2;
 parameter_kappa = 0.05;
 parameter_kappa_new = .1;

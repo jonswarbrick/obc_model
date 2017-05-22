@@ -16,7 +16,7 @@ var Xjr lambdaX;
 
 @#include "shocks_1.mod"
 
-parameters varrho alp zzeta betta deltaSS sigma_c rhodelta rhoA
+parameters varrho alp zzeta betta deltaSS sigma_c gy rhodelta rhoA
 rho_psi Ass Phi sigmaB xiB Theta kappaSS logit_deltaSS epsilon kappa_GK gam
 sigma_a sigma_psi sigma_delta deltabar logit_deltabar
 chi sigma_h psi_h epsilonC epsilonH gam_jr theta_jr C_bar H_bar 
@@ -49,6 +49,7 @@ epsilon = -2;
 kappa_GK = 13;
 gam=1e-8;
 kappaSS=parameter_kappa;
+gy = 0;
 
 Theta=parameter_Theta;
 Phi=parameter_Phi;
@@ -349,5 +350,5 @@ end;
     stoch_simul( order = 2, irf = 0, periods = 10000 );
 @#endif
 @#if sim_type == 2
-    stoch_simul( nograph , replic = 500, order = 3, irf = 60, periods = 0 , irf_shocks = ( @#include "shocks_3.mod" ) );
+    stoch_simul( nograph , replic = 500, order = 3, irf = 60, periods = 0 , irf_shocks = ( eps_psi ) );
 @#endif

@@ -1,16 +1,23 @@
 close all;
 Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
-I = exp(oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
+y = log(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:));
+inv = (oo_.endo_simul(strmatch('inv',M_.endo_names,'exact'),:));
+c = (oo_.endo_simul(strmatch('c',M_.endo_names,'exact'),:));
+I = exp(inv)./(mean(exp(inv)));
+C = exp(c)./(mean(exp(c)));
 [~,hp.Y] = hpfilter(Y,1600);
-[~,hp.I] = hpfilter(I./mean(I),1600);
+[~,hp.I] = hpfilter(I,1600);
 spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 K = exp((oo_.endo_simul(strmatch('k',M_.endo_names,'exact'),:)));
 Q = exp((oo_.endo_simul(strmatch('q',M_.endo_names,'exact'),:)));
-C = exp((oo_.endo_simul(strmatch('c',M_.endo_names,'exact'),:)));
-[~,hp.C] = hpfilter(C./mean(C),1600);
+[~,hp.C] = hpfilter(C,1600);
+[~,hp.y] = hpfilter(y,1600);
+[~,hp.inv] = hpfilter(inv,1600);
+[~,hp.c] = hpfilter(c,1600);
 if strcmp(dynareOBC_.BaseFileName,'obc')
 B = exp((oo_.endo_simul(strmatch('b',M_.endo_names,'exact'),:)));
 D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
+E_rate = ((oo_.endo_simul(strmatch('E_rate',M_.endo_names,'exact'),:)));
 elseif strcmp(dynareOBC_.BaseFileName,'rbc')
 B = Q .* K;
 D_rate = zeros(1,length(Y));
@@ -34,8 +41,14 @@ disp(horzcat('Capital-asset ratio: ',num2str(mean(N./(Q.*K)))));
 % Table for paper
 variables = {'Y','I','C','D','E','spread'};
 data = [ hp.Y.*100 , hp.I.*100 , hp.C.*100 , D_rate'.*100 , E_rate'.*100 , spread'.*100  ];
+data2 = [ hp.y.*100 , hp.inv.*100 , hp.c.*100 , D_rate'.*100 , E_rate'.*100 , spread'.*100  ];
+data3 = [ Y'.*100 , I'.*100 , C'.*100 , D_rate'.*100 , E_rate'.*100 , spread'.*100  ];
 corr_coeff = corrcoef(data);
+corr_coeff2 = corrcoef(data2);
+corr_coeff3 = corrcoef(data3);
 moments = [ mean(data)' std(data)' skewness(data)' kurtosis(data)' ];
+moments2 = [ mean(data2)' std(data2)' skewness(data2)' kurtosis(data2)' ];
+moments3 = [ mean(data3)' std(data3)' skewness(data3)' kurtosis(data3)' ];
 
 paper_data = [ ...
     corr_coeff(1,1) , corr_coeff(1,2) , corr_coeff(1,3) ,...
@@ -43,18 +56,55 @@ paper_data = [ ...
     ( moments(:,2) )' ; ( moments(:,3) )' ]; 
 
 
+paper_data2 = [ ...
+    corr_coeff2(1,1) , corr_coeff2(1,2) , corr_coeff2(1,3) ,...
+    corr_coeff2(1,4) , corr_coeff2(1,5) , corr_coeff2(1,6) ; ...
+    ( moments2(:,2) )' ; ( moments2(:,3) )' ]; 
+
+
+paper_data3 = [ ...
+    corr_coeff3(1,1) , corr_coeff3(1,2) , corr_coeff3(1,3) ,...
+    corr_coeff3(1,4) , corr_coeff3(1,5) , corr_coeff3(1,6) ; ...
+    ( moments3(:,2) )' ; ( moments3(:,3) )' ]; 
+
+
 tab_paper = table(paper_data(:,1),paper_data(:,2),paper_data(:,3),...
     paper_data(:,4),paper_data(:,5),paper_data(:,6),...
     'VariableNames',variables,'RowNames',{'corr','sd','skew'});
 
+tab_paper2 = table(paper_data2(:,1),paper_data2(:,2),paper_data2(:,3),...
+    paper_data2(:,4),paper_data2(:,5),paper_data2(:,6),...
+    'VariableNames',variables,'RowNames',{'corr','sd','skew'});
+
+
+tab_paper3 = table(paper_data3(:,1),paper_data3(:,2),paper_data3(:,3),...
+    paper_data3(:,4),paper_data3(:,5),paper_data3(:,6),...
+    'VariableNames',variables,'RowNames',{'corr','sd','skew'});
+
 disp('**-------------------------------------------------------------------------------**');
-disp('Moments');
+disp('Exact percentage');
 disp(tab_paper);
+disp('**-------------------------------------------------------------------------------**');
+
+
+disp('**-------------------------------------------------------------------------------**');
+disp('Logs');
+disp(tab_paper2);
+disp('**-------------------------------------------------------------------------------**');
+
+
+disp('**-------------------------------------------------------------------------------**');
+disp('unfiltered');
+disp(tab_paper3);
 disp('**-------------------------------------------------------------------------------**');
 
 Y = ((oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
 R = exp((oo_.endo_simul(strmatch('r',M_.endo_names,'exact'),:)));
 if strcmp(dynareOBC_.BaseFileName,'obc')
+            mv = (oo_.endo_simul(strmatch('mv',M_.endo_names,'exact'),:));
+            mv(mv<1e-8) = 0;
+            mv(mv>1e-8) = 1;
+            binding_periods = mean(mv);
 disp(horzcat('Constraint binding in ',num2str(100*binding_periods),'% of periods'));
 kappa = ((oo_.endo_simul(strmatch('kappa',M_.endo_names,'exact'),:)));
 psi = ((oo_.endo_simul(strmatch('psi',M_.endo_names,'exact'),:)));

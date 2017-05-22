@@ -13,14 +13,14 @@ opt.no_cols_sub_plots = 4;
 
 % For small comparison (direct entry)
 opt.epsshock = char('eps_psi');
-opt.shockname = char('KQ','A');
+opt.shockname = char('KQ');
 % opt.epsshock = char('epsdelta');
 % opt.shockname = char('Depreciation Shock');
-opt.data_files_desc = {'rbc','obc'};
-opt.num_datasets = 2;
+opt.data_files_desc = {'rbc','gk','obc'};
+opt.num_datasets = 3;
 opt.data_files = {...
     'latest_rbc_results_1'...
-    ...,'latest_gk_results_1'...
+    ,'latest_gk_results_1'...
     ,'latest_newobc_results_1'...
     ...,'newobc_irfs_order3_X3_fast_phi2_shocksNegPsiA_habitC70_habitH0_sepUtil'...
     ...'rbc_irfs_order3_X3_fast_phi2_shocksDeltaA_habitC70_habitH0_sepUtil'...
@@ -56,8 +56,8 @@ for ii=1:opt.num_datasets
               eval( strcat('offset.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = dynareOBC_.IRFOffsets.',strtrim(opt.variables(kk,:)),'_',curr_shock,';'));
               eval( strcat('irfsAroundZero.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = oo_.irfs.',strtrim(opt.variables(kk,:)),'_',curr_shock,';'));
             catch
-              eval( strcat('offset.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = zeros(1,40);'));
-              eval( strcat('irfsAroundZero.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = zeros(1,40);'));
+              eval( strcat('offset.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = zeros(1,60);'));
+              eval( strcat('irfsAroundZero.',strtrim(opt.variables(kk,:)),'(',num2str(jj),',:) = zeros(1,60);'));
             end
         end
     end
@@ -70,9 +70,9 @@ for ii=1:opt.num_datasets
          end
         curr_var = strtrim(opt.variables(jj,:));
         plot_type = strtrim(opt.var_paper_plot(jj,:));
-        model.abs(:,:,index,jj) = eval(['irfs.',curr_var,'(:,1:40)']);
-        model.aroundZero(:,:,index,jj) = eval(['irfsAroundZero.',curr_var,'(:,1:40)']);
-        model.paper(:,:,index,jj) = eval([plot_type,'.',curr_var,'(:,1:40)']);
+        model.abs(:,:,index,jj) = eval(['irfs.',curr_var,'(:,1:60)']);
+        model.aroundZero(:,:,index,jj) = eval(['irfsAroundZero.',curr_var,'(:,1:60)']);
+        model.paper(:,:,index,jj) = eval([plot_type,'.',curr_var,'(:,1:60)']);
     end
 end
 save('data.mat','model')
@@ -85,21 +85,21 @@ for shocks = 1:opt.number_shocks
     h = figure;
     for vars = 1:opt.num_var
         subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,vars),
-        plot(model.paper(shocks,1:40,1,vars),'Color','r','LineStyle','-','LineWidth',1); hold on;
+        plot(model.paper(shocks,1:60,1,vars),'Color','r','LineStyle','-','LineWidth',1); hold on;
         if opt.num_datasets >1
-        plot(model.paper(shocks,1:40,2,vars), 'b','LineStyle','-', 'LineWidth',1);
+        plot(model.paper(shocks,1:60,2,vars), 'b','LineStyle','-', 'LineWidth',1);
         end
         if opt.num_datasets >2
-        plot(model.paper(shocks,1:40,3,vars),'Color','r','LineStyle','--','LineWidth',1); hold on;
+        plot(model.paper(shocks,1:60,3,vars),'Color','r','LineStyle','--','LineWidth',1); hold on;
         end
         if opt.num_datasets >3
-        plot(model.paper(shocks,1:40,4,vars), 'b','LineStyle','--', 'LineWidth',1);
+        plot(model.paper(shocks,1:60,4,vars), 'b','LineStyle','--', 'LineWidth',1);
         end
         if opt.num_datasets >4
-        plot(model.paper(shocks,1:40,5,vars),'Color','r','LineStyle',':','LineWidth',1); hold on;
+        plot(model.paper(shocks,1:60,5,vars),'Color','r','LineStyle',':','LineWidth',1); hold on;
         end
         if opt.num_datasets >5
-        plot(model.paper(shocks,1:40,6,vars), 'b','LineStyle',':', 'LineWidth',1);
+        plot(model.paper(shocks,1:60,6,vars), 'b','LineStyle',':', 'LineWidth',1);
         end
         %xlabel('Quarters');
         %ylabel('% dev from SS');
