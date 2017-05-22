@@ -3,6 +3,7 @@ results_sim/**
 model/all_models/
 model/all_models.m
 model/codegen/
+codegen/
 *_steadystate2.m
 *_static.m
 *_dynamic.m

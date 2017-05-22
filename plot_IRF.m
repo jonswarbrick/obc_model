@@ -90,7 +90,7 @@ for shocks = 1:opt.number_shocks
         plot(model.paper(shocks,1:60,2,vars), 'b','LineStyle','-', 'LineWidth',1);
         end
         if opt.num_datasets >2
-        plot(model.paper(shocks,1:60,3,vars),'Color','r','LineStyle','--','LineWidth',1); hold on;
+        plot(model.paper(shocks,1:60,3,vars),'Color','k','LineStyle','--','LineWidth',1); hold on;
         end
         if opt.num_datasets >3
         plot(model.paper(shocks,1:60,4,vars), 'b','LineStyle','--', 'LineWidth',1);
