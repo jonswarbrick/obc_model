@@ -19,7 +19,8 @@ number_of_runs = 1;
 % FastIRF/no cubature, 4: FastIRF/default cubature, 5: FastIRF QuasiMC
 %opts.dynareOBC_irf_options_1 = ' SlowIRFs FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=60 NoCubature omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FastCubature FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-opts.dynareOBC_irf_options_1 = '  OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
+%opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
+opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-1000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 %opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
 
@@ -33,7 +34,7 @@ opts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBou
 
 if mult_run == 0
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 6 ];
+models_to_run = [ 2 ];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
@@ -42,7 +43,8 @@ shock_choice = 1;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
-opts.mat_file_string_1 = '_order2_defcub';
+opts.mat_file_string_1 = '_order2_QMC_KQ1pc';
+%opts.mat_file_string_1 = '_order2_QMC_negA1sd';
 opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
@@ -91,8 +93,8 @@ end
 if sim_type == 2
 %parameter_sigma_a = 0.0055408;
 parameter_rhoA = 0.95;
-%parameter_rho_psi = 0.66;
-parameter_rho_psi = 0;
+parameter_rho_psi = 0.66;
+%parameter_rho_psi = 0;
 parameter_sigma_psi = 0.00001;
 else
 parameter_rho_psi = 0;
