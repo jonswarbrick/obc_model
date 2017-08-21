@@ -1,1 +1,1 @@
-@#define sim_type = 2
+@#define sim_type = 1

@@ -3,9 +3,23 @@ fclose('all');
 if exist('mutliple_log.txt','file') == 2
 delete('mutliple_log.txt')
 end
+% 1 = simulation, 2 = irf
+multopts.sim_type = 2;
+% other
+multopts.number_of_runs = 1;
+% dynareOBC options for each run:
+multopts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
+multopts.dynareOBC_irf_options_2 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+multopts.dynareOBC_irf_options_3 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+multopts.dynareOBC_irf_options_4 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+multopts.dynareOBC_sim_options_1 = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+multopts.dynareOBC_sim_options_2 = ' QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=0 omega=10000 CompileSimulationCode Sparse';
+multopts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=1 omega=10000 CompileSimulationCode Sparse';
+
+
 % 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
 mult.models_to_run = [ 1 , 2 , 6 ];
-multopts.parameter_habits_C_vec = [ 0 , .7 ];
+multopts.parameter_habits_C_vec = 0;
 multopts.parameter_habits_H_vec = [ 0 ];%, .7 ];
 multopts.parameter_Phi_vec = [0];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
@@ -49,6 +63,7 @@ mult.parameter_Phi = multopts.parameter_Phi_vec(mult_m);
 mult.parameter_xi = multopts.parameter_xi(mult_par);
 mult.total_loops = multopts.total_loops;
 mult.loop_num = multopts.loop_num;
+mult.sim_type = multopts.sim_type;
 
 str_util = {'nonsepUtil';'sepUtil';'sepUtilFrisch';'nonsepUtilBundles';'JRutil'};
 str_shocks = {'Psi';'Delta';'Conf';'M'};
@@ -84,3 +99,7 @@ end
 clear;
 delete('mult.mat')
 delete('mult_loop.mat')
+
+
+%% Produce plots
+irf_Plots_paper;

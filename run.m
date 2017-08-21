@@ -7,47 +7,44 @@ end
 if exist('results_sim')~=7
     mkdir('results_sim')
 end
-    
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1 if calling run from multiple_run.m, 0 otherwise
 mult_run = 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if mult_run == 0
 % 1 = simulation, 2 = irf
-sim_type = 2;
+sim_type = 1;
 % other
 number_of_runs = 1;
-% dynareOBC options 1: SlowIRF/no cubature, 2: FastIRF/Fast cubature, 3:
-% FastIRF/no cubature, 4: FastIRF/default cubature, 5: FastIRF QuasiMC
-%opts.dynareOBC_irf_options_1 = ' SlowIRFs FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=60 NoCubature omega=10000 CompileSimulationCode';
-%opts.dynareOBC_irf_options_1 = ' FastCubature FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-%opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
-opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-1000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
-%opts.dynareOBC_irf_options_1 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-%opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=64 omega=10000 CompileSimulationCode';
-
+% dynareOBC options for each run:
+opts.dynareOBC_irf_options_1 = '  QuasiMonteCarloLevel=8 CubatureTolerance=0 OrderOverride=2 FirstOrderConditionalCovariance shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode';
 opts.dynareOBC_irf_options_2 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_3 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_irf_options_4 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
 opts.dynareOBC_sim_options_1 = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_2 = ' QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=0 omega=10000 CompileSimulationCode Sparse';
 opts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=1 omega=10000 CompileSimulationCode Sparse';
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if mult_run == 0
-% 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 2 ];
+% 1 = rbc, 2 = gk, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc , 7 = gkq
+models_to_run = [ 6 ];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
 % 1 = KQ, 2 = delta, 4 = epsA  (IRF -- epsA for all for simulation)
-shock_choice = 1;
+shock_choice = 4;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % MAT-file names
-opts.mat_file_string_1 = '_order2_QMC_KQ1pc';
+opts.mat_file_string_1 = '_order2_nocub';
+%opts.mat_file_string_1 = '_order2_QMC_KQ5pc';
 %opts.mat_file_string_1 = '_order2_QMC_negA1sd';
 opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
 opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
+
+% 1PC KQ = -1000x, 5PC = -5000x
 
 % Parameters
 elseif mult_run == 1
@@ -60,10 +57,16 @@ opts.mat_file_string_1 = mult.temp_file_name;
 opts.mat_file_string_2 = mult.temp_file_name;
 opts.mat_file_string_3 = mult.temp_file_name;
 opts.mat_file_string_4 = mult.temp_file_name;
-parameter_Phi = mult.parameter_Phi;
-parameter_habits_C = mult.parameter_habits_C;
-parameter_habits_H = mult.parameter_habits_H;
-parameter_xi = mult.parameter_xi;
+sim_type = mult.sim_type;
+number_of_runs = mult.number_of_runs;
+opts.dynareOBC_irf_options_1 = mult.dynareOBC_irf_options_1;
+opts.dynareOBC_irf_options_2 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+opts.dynareOBC_irf_options_3 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+opts.dynareOBC_irf_options_4 = ' FirstOrderConditionalCovariance shockscale=3 TimeToEscapeBounds=40 TimeToReturnToSteadyState=10 NoCubature omega=10000 MLVSimulationMode=2  CompileSimulationCode';
+opts.dynareOBC_sim_options_1 = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_2 = ' QuasiMonteCarloLevel=8 CubatureTolerance=0 FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=0 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options_3 = ' FirstOrderConditionalCovariance TimeToEscapeBounds=40 TimeToReturnToSteadyState=20 MLVSimulationMode=1 omega=10000 CompileSimulationCode Sparse';
+
 end
 
 % Parameters
@@ -78,9 +81,14 @@ parameter_rhoA = 0.95;
 parameter_Theta = 0.8449834740987057;
 parameter_sigma_psi = 0;
 elseif models_to_run==6
-parameter_sigma_a = 0.005713680663713;
+parameter_sigma_a = 0.006563553012779;
+parameter_rhoA = 0.848157065533977;
+parameter_Theta = 0.733636316066697;
+parameter_sigma_psi = 0;
+elseif models_to_run==7
+parameter_sigma_a = 0.005686153270752;
 parameter_rhoA = 0.95;
-parameter_Theta = 0.520312681802055;
+parameter_Theta = 0.824873722926548;
 parameter_sigma_psi = 0;
 else
 parameter_sigma_a = 0.00358;
@@ -94,7 +102,7 @@ if sim_type == 2
 %parameter_sigma_a = 0.0055408;
 parameter_rhoA = 0.95;
 parameter_rho_psi = 0.66;
-%parameter_rho_psi = 0;
+parameter_rho_psi = 0;
 parameter_sigma_psi = 0.00001;
 else
 parameter_rho_psi = 0;
@@ -131,7 +139,7 @@ elseif sim_type == 2
 opts.dynareOBC_options = {opts.dynareOBC_irf_options_1 ; opts.dynareOBC_irf_options_2 ; opts.dynareOBC_irf_options_3 ; opts.dynareOBC_irf_options_4};
 end
 opts.mat_file_string = {opts.mat_file_string_1 ; opts.mat_file_string_2 ; opts.mat_file_string_3 ; opts.mat_file_string_4};
-opts.models = {'rbc' ; 'gk' ; 'obc' ; 'nk' ; 'nkobc' ; 'newobc' };
+opts.models = {'rbc' ; 'gk' ; 'obc' ; 'nk' ; 'nkobc' ; 'newobc' ; 'gkq' };
 opts.sim_type_name = {'sim' ; 'irf'};
 if mult_run == 0
 opts.loop_num = 1;
@@ -163,16 +171,19 @@ for ii=1:numberModels
     fid_adj = fopen( 'adj_type.mod', 'wt' );
     fprintf( fid_adj, '@#define adj_type = %d\n', adj_type);
     fclose(fid_adj);
-    
+
 %     if models_to_run(ii) == 2
 %         try
 %         movefile('GKQ_steadystate.m','all_models_steadystate.m')
 %         end
 %     end
-    
+
     try
         if models_to_run(ii) == 2
             eval(strcat('dynareOBC gk.mod ',char(opts.dynareOBC_options(jj,:)),';'));
+            binding_periods = 1;
+        elseif models_to_run(ii) == 7
+            eval(strcat('dynareOBC gkq.mod ',char(opts.dynareOBC_options(jj,:)),';'));
             binding_periods = 1;
         elseif models_to_run(ii) == 6
             eval(strcat('dynareOBC obc.mod ',char(opts.dynareOBC_options(jj,:)),';'));
@@ -183,7 +194,7 @@ for ii=1:numberModels
         elseif models_to_run(ii) == 1
             eval(strcat('dynareOBC rbc.mod ',char(opts.dynareOBC_options(jj,:)),';'));
             binding_periods = 0;
-        else 
+        else
             disp('Valid model not chosen!')
         end
 %         Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));

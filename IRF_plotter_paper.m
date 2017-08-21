@@ -86,7 +86,7 @@ for shocks = 1:opt.number_shocks
      if ~opt.nolegend
      legend(opt.data_files_desc,'position', [0.275 0.05 0.45 0.05], 'Orientation', 'horizontal','Interpreter','latex')
      end
-     img_filename = strcat('C:\Users\Jonathan\Dropbox\PhD\ModelsNew\6.Dividend-EquityModel\OBC\Paper\images\IRF_',opt.shock_shortname(shocks,:),'_',opt.type_desc);
+     img_filename = strcat('plot_files\IRF_',opt.shock_shortname(shocks,:),'_',opt.type_desc);
      %h.PaperUnits = 'points';
      %h.PaperPosition = opt.plot_size; 
      print(h,img_filename,'-r300','-dpng')

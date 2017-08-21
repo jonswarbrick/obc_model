@@ -120,13 +120,13 @@ model;
 
 @#if adj_type == 1
 % CEE
-Y = C+I*(1-Phi*(1-I/lag_I)^2);
-# lead_Y = lead_C+lead_I*(1-Phi*(1-lead_I/I)^2);
+Y = C+I;
+# lead_Y = lead_C+lead_I;
 @#endif
 @#if adj_type == 2
 % Ireland (2003) costs
-Y = C+I-Phi*psi*lag_K*(K/(psi*lag_K)-1)^2;
-# lead_Y = lead_C + lead_I - Phi*psi(+1)*K*(lead_K/(psi(+1)*K)-1)^2;
+Y = C+I;
+# lead_Y = lead_C + lead_I;
 @#endif
 
 # YW = Y*exp(disp);
