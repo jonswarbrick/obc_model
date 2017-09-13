@@ -28,17 +28,17 @@ if exist('model/calibrate_log_obc_order3.txt','file') == 2
 delete('model/calibrate_log_obc_order3.txt')
 end
 
-opts.dynareOBC_sim_options = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 
 sim_type = 1;
-% 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc , 7 = gkq
+% 1 = rbc, 2 = gk, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc , 7 = gkq
 models_to_run = [ 7 ];
 num_models = length(models_to_run);
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
 % 1 = KQ, 2 = delta
-shock_choice = 1;
+shock_choice = 4;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
 % Other

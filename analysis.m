@@ -18,17 +18,20 @@ if strcmp(dynareOBC_.BaseFileName,'obc')
 B = exp((oo_.endo_simul(strmatch('b',M_.endo_names,'exact'),:)));
 D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
 E_rate = ((oo_.endo_simul(strmatch('E_rate',M_.endo_names,'exact'),:)));
+N = Q.*K-B;
 elseif strcmp(dynareOBC_.BaseFileName,'rbc')
 B = Q .* K;
 D_rate = zeros(1,length(Y));
 E_rate = zeros(1,length(Y));
-elseif strcmp(dynareOBC_.BaseFileName,'gk')
-B = Q .* K .* ( 1 -  Theta ./ ( exp((oo_.endo_simul(strmatch('m',M_.endo_names,'exact'),:))))); 
+N = Q.*K-B;
+elseif strcmp(dynareOBC_.BaseFileName,'gkq')
+phi_GK = ((oo_.endo_simul(strmatch('nub',M_.endo_names,'exact'),:)))./(((oo_.endo_simul(strmatch('Thetax',M_.endo_names,'exact'),:)))-(((oo_.endo_simul(strmatch('mus',M_.endo_names,'exact'),:)))+((oo_.endo_simul(strmatch('mue',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('E',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('QE',M_.endo_names,'exact'),:)))./(Q.*K)));
+N = Q.*K./phi_GK;
+B = Q.*K - N - ((oo_.endo_simul(strmatch('QE',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('E',M_.endo_names,'exact'),:)));    
 D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
-E_rate = zeros(1,length(Y));
+E_rate = ((oo_.endo_simul(strmatch('E_rate',M_.endo_names,'exact'),:)));
 end
 D = ((oo_.endo_simul(strmatch('D',M_.endo_names,'exact'),:)));
-N = Q.*K-B;
 [y_ac,~,~] = autocorr(hp.Y,1);
 disp(horzcat('S.D. Y = ',num2str(std(hp.Y)),'| Target = 0.010563'));
 disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.86255'));

@@ -6,16 +6,7 @@
 
 var k a nub mus mue Thetax QE E q logit_delta c r inv spread psi Y H D_rate E_rate;
 
-@#if shock_choice == 1
-    varexo epsA eps_psi;
-@#endif
-@#if shock_choice == 2
-    varexo epsA epsdelta;
-@#endif
-@#if shock_choice == 4
-    varexo epsA epsG;
-@#endif
-
+@#include "shocks_1.mod"
 
 @#if utility_type == 5
 var Xjr lambdaX;
@@ -48,10 +39,20 @@ rhoA=parameter_rhoA;
 rhodelta=parameter_rhodelta;
 rho_psi = parameter_rho_psi;
 
-sigmaB=0.975;
-xiB=0.0045;
-epsilon = -2;
-kappa_GK = 13;
+%% GKQ (2012):
+%sigmaB=0.9685;
+%xiB=0.00289;
+%epsilon = -1.21;
+%kappa_GK = 13.41;
+
+% GKQ (2010):
+sigmaB=0.975; %or 0.972 (table/text differ)
+
+xiB = 0.003;
+sigmaB = 0.982;
+xiB=0.001;
+epsilon = -1.21;
+kappa_GK = 13.41;
 
 gam=1e-8;
 kappaSS=parameter_kappa;
@@ -280,5 +281,5 @@ end;
     stoch_simul( order = 2, irf = 0, periods = 1000 );
 @#endif
 @#if sim_type == 2
-    stoch_simul( nograph , replic = 500, order = 3, irf = 60, periods = 0 , irf_shocks = ( eps_psi ) );
+    stoch_simul( nograph , replic = 256, order = 3, irf = 60, periods = 0 , irf_shocks = ( @#include "shocks_3.mod" ) );
 @#endif
