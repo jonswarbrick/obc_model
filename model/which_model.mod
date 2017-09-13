@@ -1,1 +1,1 @@
-@#define model_type = 2
+@#define model_type = 7

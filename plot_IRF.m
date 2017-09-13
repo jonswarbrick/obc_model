@@ -1,9 +1,9 @@
 clear;
-%close all;
+close all;
 %% Prepare Data For Plots -- User Settings
-opt.variables = char('Y','inv','c','k','r','D_rate','E_rate','q','spread','kappa','delta','H','pi'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
-opt.var_paper_plot = char('rel','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfs','irfs','irfsAroundZero','irfsAroundZero','irfs','irfs','rel','irfs');
-opt.names = char('Output','Investment','Consumption','Capital','Deposit Rate','Dividend Payment','Equity Issuance','Cost of Capital','Spread','kappa','delta','Hours','Inflation');
+opt.variables = char('Y','inv','c','k','r','D_rate','E_rate','q','spread','H'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
+opt.var_paper_plot = char('rel','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfs','irfs','irfsAroundZero','irfsAroundZero','rel');
+opt.names = char('Output','Investment','Consumption','Capital','Deposit Rate','Dividend Payment','Equity Issuance','Cost of Capital','Spread','Hours');
 opt.no_rows_sub_plots = 4;
 opt.no_cols_sub_plots = 4;
 
@@ -16,15 +16,15 @@ opt.epsshock = char('eps_psi');
 opt.shockname = char('KQ');
 % opt.epsshock = char('epsdelta');
 % opt.shockname = char('Depreciation Shock');
-opt.data_files_desc = {'rbc','gk','obc'};
-opt.num_datasets = 3;
+opt.data_files_desc = {'gk','gkq'};
+opt.num_datasets = 2;
 opt.data_files = {...
     ...'latest_rbc_results_1'...
     ...,'latest_gk_results_1'...
     ...,'latest_newobc_results_1'...
-    'rbc_order2_noub_KQ1pc_altUtil'...
-    'gk_order2_noub_KQ1pc_altUtil'...
-    ,'newobc_order2_noub_KQ1pc_altUtil'...
+    'gk_order2_QMC'...
+    ,'gkq_order2_QMC'...
+    ...,'newobc_order2_noub_KQ1pc_altUtil'...
     ...'rbc_irfs_order3_X3_fast_phi2_shocksDeltaA_habitC70_habitH0_sepUtil'...
     ...,'newobc_irfs_order3_X3_fast_phi2_shocksDeltaA_habitC70_habitH0_sepUtil'...
     ...'rbc_irfs_order3_X5_fast_phi2_shocksDeltaA_habitC70_habitH0_sepUtil'...
@@ -83,7 +83,7 @@ clearvars -except opt
 %% Plots
 load('data.mat')
 
-for shocks = 1:opt.number_shocks  
+for shocks = 1:opt.number_shocks
     h = figure;
     for vars = 1:opt.num_var
         subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,vars),

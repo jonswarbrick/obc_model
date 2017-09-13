@@ -12,7 +12,7 @@ options.num_par = 3;
 options.par = {'sigma_a' ; 'rho_a' ; 'Theta'}; % order important
 
 if models_to_run(current_model)==1
-    options.init_val(1) = 0.0059038615167123 ;
+    options.init_val(1) = 0.006145871647583;
     options.init_val(2) = 0.95;
     options.init_val(3) = 0.9;
 elseif models_to_run(current_model)==2
@@ -20,9 +20,13 @@ elseif models_to_run(current_model)==2
     options.init_val(2) = 0.95;
     options.init_val(3) = 0.585227706178260;
 elseif models_to_run(current_model)==6
-    options.init_val(1) = 0.003500638344089;
-    options.init_val(2) = 0.828157065533977;
-    options.init_val(3) = 0.569692624538134;
+    options.init_val(1) = 0.0060626464427887;
+    options.init_val(2) = 0.95;
+    options.init_val(3) = 0.669734151867773;
+elseif models_to_run(current_model)==7
+    options.init_val(1) = 0.005710743233638;
+    options.init_val(2) = 0.95;
+    options.init_val(3) = 0.893717341213108;
 end
     
 
@@ -84,9 +88,10 @@ save('settings_file.mat','options');
 
 %% Initial run
 
-eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(3,:)),';'));
+eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(1,:)),';'));
                  
-Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
+%Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
+Y = log(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:));
 [~,Y] = hpfilter(Y,1600);
 spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 
@@ -113,24 +118,21 @@ options.prev_err = options.curr_err;
             calibs_mess = ['   sigma_A = ',num2str(options.curr_val(1)),' | rhoA = ',num2str(options.curr_val(2)),...
                 ' | Theta = ',num2str(options.curr_val(3)),];
             if models_to_run(current_model)==1
-                    fid_log = fopen( 'calibrate_log_rbc_order3.txt', 'At' );
+                    fid_log = fopen( 'calibrate_log_rbc_order2.txt', 'At' );
             elseif models_to_run(current_model)==2
-                    fid_log = fopen( 'calibrate_log_gk_order3.txt', 'At' );
+                    fid_log = fopen( 'calibrate_log_gk_order2.txt', 'At' );
+            elseif models_to_run(current_model)==7
+                    fid_log = fopen( 'calibrate_log_gkq_order2.txt', 'At' );
             elseif models_to_run(current_model)==6
-                    fid_log = fopen( 'calibrate_log_obc_order3.txt', 'At' );
+                    fid_log = fopen( 'calibrate_log_obc_order2.txt', 'At' );
             end
             log_txt = strcat(err_mess,'\n',values_mess,'\n',calibs_mess,'\n');
             fprintf( fid_log, log_txt );
             fclose(fid_log);
 
 %% Calibration
-
-for or=1:3;
-    options.or=or;
-    options.or=3;
+    options.or = opts.order;
     big_crit = 1;
-   % options.curr_err = 1;
-   % options.prev_err = options.curr_err;
     options.jj = 1;
 while big_crit
     for ii=1:options.num_par
@@ -165,9 +167,10 @@ while big_crit
 
             save('../opts.mat','parameter_sigma_a','parameter_rhoA','parameter_Theta','-append');
             save('settings_file.mat','options');
-            eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(options.or,:)),';'));
+            eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),' ',char(opts.dynareOBC_options(1,:)),';'));
                  
-            Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
+            %Y = (oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:))./(mean(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
+            Y = log(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:));
             [~,Y] = hpfilter(Y,1600);
             spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 
@@ -175,7 +178,6 @@ while big_crit
             load('../opts.mat');
             load('loop.mat');
             ii=options.ii;
-            or=options.or;
 
             [y_ac,~,~] = autocorr(Y,1);
 
@@ -217,6 +219,14 @@ while big_crit
                     fid_log = fopen( 'calibrate_log_gk_order2.txt', 'At' );
                 elseif options.or==3
                     fid_log = fopen( 'calibrate_log_gk_order3.txt', 'At' );
+                end
+            elseif models_to_run(current_model)==7
+                if options.or==1
+                    fid_log = fopen( 'calibrate_log_gkq_order1.txt', 'At' );
+                elseif options.or==2
+                    fid_log = fopen( 'calibrate_log_gkq_order2.txt', 'At' );
+                elseif options.or==3
+                    fid_log = fopen( 'calibrate_log_gkq_order3.txt', 'At' );
                 end
             elseif models_to_run(current_model)==6
                 if options.or==1
@@ -261,6 +271,14 @@ end
         elseif options.or==3
             save( '../calibrations/calibration_gk_order3.mat' );
         end
+    elseif models_to_run(current_model)==7
+        if options.or==1
+            save( '../calibrations/calibration_gkq_order1.mat' );
+        elseif options.or==2
+            save( '../calibrations/calibration_gkq_order2.mat' );
+        elseif options.or==3
+            save( '../calibrations/calibration_gkq_order3.mat' );
+        end
     elseif models_to_run(current_model)==6
         if options.or==1
             save( '../calibrations/calibration_obc_order1.mat' );
@@ -270,4 +288,3 @@ end
             save( '../calibrations/calibration_obc_order3.mat' );
         end
     end
-end

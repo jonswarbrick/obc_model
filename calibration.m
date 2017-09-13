@@ -28,35 +28,29 @@ if exist('model/calibrate_log_obc_order3.txt','file') == 2
 delete('model/calibrate_log_obc_order3.txt')
 end
 
-opts.dynareOBC_sim_options_1 = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
-opts.dynareOBC_sim_options_2 = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
-opts.dynareOBC_sim_options_3 = ' NoCubature MILPSolver=cplex OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_sim_options = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
 
 sim_type = 1;
-% 1 = rbc, 2 = gkq, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc
-models_to_run = [ 1 ];
+% 1 = rbc, 2 = gk, 3 = obc, 4 = nk, 5 = nkobc, 6 = newobc , 7 = gkq
+models_to_run = [ 7 ];
 num_models = length(models_to_run);
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
 utility_type = 5;
 % 1 = KQ, 2 = delta
-shock_choice = 1;
+shock_choice = 4;
 % 1 = CEE, 2 = Ireland (2003)
 adj_type = 1;
-% MAT-file names
-opts.mat_file_string_1 = '_order2_nocub_phi2_shocksPsiA_habitC0_habitH0_Util5';
-opts.mat_file_string_2 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
-opts.mat_file_string_3 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
-opts.mat_file_string_4 = '_irfs_order3_X3_slow_phi4_shocksPsiA_habitC90_habitH0_sepUtilFrisch';
+% Other
+opts.order = 2; % approximation order
 
 [~,numberModels] = size(models_to_run);
 if sim_type == 1
-opts.dynareOBC_options = {opts.dynareOBC_sim_options_1 ; opts.dynareOBC_sim_options_2 ; opts.dynareOBC_sim_options_3};
+opts.dynareOBC_options = opts.dynareOBC_sim_options;
 elseif sim_type == 2
-opts.dynareOBC_options = {opts.dynareOBC_irf_options_1 ; opts.dynareOBC_irf_options_2 ; opts.dynareOBC_irf_options_3 ; opts.dynareOBC_irf_options_4};
+opts.dynareOBC_options = opts.dynareOBC_irf_options;
 end
-opts.mat_file_string = {opts.mat_file_string_1 ; opts.mat_file_string_2 ; opts.mat_file_string_3 ; opts.mat_file_string_4};
-opts.models = {'rbc' ; 'gk' ; 'oldobc' ; 'nk' ; 'nkobc' ; 'obc' };
+opts.models = {'rbc' ; 'gk' ; 'oldobc' ; 'nk' ; 'nkobc' ; 'obc' ; 'gkq'};
 opts.sim_type_name = {'sim' ; 'irf'};
 
 save('opts.mat')

@@ -10,7 +10,7 @@ multopts.parameter_habits_H_vec = [ 0 ];%, .7 ];
 multopts.parameter_Phi_vec = [0];
 % 1 = non-separable, 2 = additive type 1 , 3 = additive type 2 , 4 =
 % non-separable habits on bundles , 5 J-R
-multopts.mult_util_type = [ 1 , 5 ];
+multopts.mult_util_type = [ 1,  5 ];
 % 1 = KQ, 2 = delta, 3 = conf, 4 = MP
 multopts.mult_shock_choice = [ 1 , 2 ];
 % 1 = CEE, 2 = Ireland (2003)
