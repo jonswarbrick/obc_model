@@ -14,17 +14,17 @@ Q = exp((oo_.endo_simul(strmatch('q',M_.endo_names,'exact'),:)));
 [~,hp.y] = hpfilter(y,1600);
 [~,hp.inv] = hpfilter(inv,1600);
 [~,hp.c] = hpfilter(c,1600);
-if strcmp(dynareOBC_.BaseFileName,'obc')
+if strcmp(dynareOBC_.BaseFileName,'obc_sim')
 B = exp((oo_.endo_simul(strmatch('b',M_.endo_names,'exact'),:)));
 D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
 E_rate = ((oo_.endo_simul(strmatch('E_rate',M_.endo_names,'exact'),:)));
 N = Q.*K-B;
-elseif strcmp(dynareOBC_.BaseFileName,'rbc')
+elseif strcmp(dynareOBC_.BaseFileName,'rbc_sim')
 B = Q .* K;
 D_rate = zeros(1,length(Y));
 E_rate = zeros(1,length(Y));
 N = Q.*K-B;
-elseif strcmp(dynareOBC_.BaseFileName,'gkq')
+elseif strcmp(dynareOBC_.BaseFileName,'gkq_sim')
 phi_GK = ((oo_.endo_simul(strmatch('nub',M_.endo_names,'exact'),:)))./(((oo_.endo_simul(strmatch('Thetax',M_.endo_names,'exact'),:)))-(((oo_.endo_simul(strmatch('mus',M_.endo_names,'exact'),:)))+((oo_.endo_simul(strmatch('mue',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('E',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('QE',M_.endo_names,'exact'),:)))./(Q.*K)));
 N = Q.*K./phi_GK;
 B = Q.*K - N - ((oo_.endo_simul(strmatch('QE',M_.endo_names,'exact'),:))).*((oo_.endo_simul(strmatch('E',M_.endo_names,'exact'),:)));    
@@ -32,12 +32,12 @@ D_rate = ((oo_.endo_simul(strmatch('D_rate',M_.endo_names,'exact'),:)));
 E_rate = ((oo_.endo_simul(strmatch('E_rate',M_.endo_names,'exact'),:)));
 end
 D = ((oo_.endo_simul(strmatch('D',M_.endo_names,'exact'),:)));
-[y_ac,~,~] = autocorr(hp.Y,1);
-disp(horzcat('S.D. Y = ',num2str(std(hp.Y)),'| Target = 0.010563'));
+[y_ac,~,~] = autocorr(hp.y,1);
+disp(horzcat('S.D. Y = ',num2str(std(hp.y)),'| Target = 0.010563'));
 disp(horzcat('AC(1) Y = ',num2str(y_ac(2)),'| Target = 0.86255'));
 disp(horzcat('mean spread = ',num2str(mean(spread)),'| Target = 0.0057369'));
 disp(horzcat('S.D. spread = ',num2str(std(spread)),'| Target = 0.0017812'));
-disp(horzcat('Investment skewness: ',num2str(skewness(I))));
+disp(horzcat('Investment skewness: ',num2str(skewness(hp.inv))));
 disp(horzcat('Spread skewness: ',num2str(skewness(spread))));
 disp(horzcat('Capital-asset ratio: ',num2str(mean(N./(Q.*K)))));
 
@@ -84,26 +84,26 @@ tab_paper3 = table(paper_data3(:,1),paper_data3(:,2),paper_data3(:,3),...
     paper_data3(:,4),paper_data3(:,5),paper_data3(:,6),...
     'VariableNames',variables,'RowNames',{'corr','sd','skew'});
 
-disp('**-------------------------------------------------------------------------------**');
-disp('Exact percentage');
-disp(tab_paper);
-disp('**-------------------------------------------------------------------------------**');
+% disp('**-------------------------------------------------------------------------------**');
+% disp('Exact percentage');
+% disp(tab_paper);
+% disp('**-------------------------------------------------------------------------------**');
 
 
 disp('**-------------------------------------------------------------------------------**');
-disp('Logs');
+% disp('Logs');
 disp(tab_paper2);
 disp('**-------------------------------------------------------------------------------**');
 
 
-disp('**-------------------------------------------------------------------------------**');
-disp('unfiltered');
-disp(tab_paper3);
-disp('**-------------------------------------------------------------------------------**');
+% disp('**-------------------------------------------------------------------------------**');
+% disp('unfiltered');
+% disp(tab_paper3);
+% disp('**-------------------------------------------------------------------------------**');
 
 Y = ((oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:)));
 R = exp((oo_.endo_simul(strmatch('r',M_.endo_names,'exact'),:)));
-if strcmp(dynareOBC_.BaseFileName,'obc')
+if strcmp(dynareOBC_.BaseFileName,'obc_sim')
             mv = (oo_.endo_simul(strmatch('mv',M_.endo_names,'exact'),:));
             mv(mv<1e-8) = 0;
             mv(mv>1e-8) = 1;
@@ -190,81 +190,3 @@ subplot(plot_rows,plot_cols,5); plot(ZLB_RHS2(time_st:time_end)); title('ZLB RHS
 end
 
 
-
-%%
-% pi = 0;
-% mc = 0;
-% disp = 0;
-% psi = 1;
-% logit_delta = logit_deltaSS;
-% nu = nubar;
-% q = 0;
-% R_ = 1 / betta;
-% r = log( R_ );
-% a = log( Ass );
-% lambdaD_ = 0;
-% lambdaB_ = gam*(1-(1-gam)*(1-Theta));
-% SZ7 = lambdaB_;
-% SZ6 = lambdaB_ + (1-gam)*SZ7*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-% SZ5 = lambdaB_ + (1-gam)*SZ6*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-% SZ4 = lambdaB_ + (1-gam)*SZ5*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-% SZ3 = lambdaB_ + (1-gam)*SZ4*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-% SZ2 = lambdaB_ + (1-gam)*SZ3*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-% SZ1 = lambdaB_ + (1-gam)*SZ2*(1-(1-gam)*(1-Theta))/( (1-(1-gam)*(1-Theta))-lambdaB_ );
-%
-% MD1_ = SZ1.* R_^1 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD2_ = SZ2.* R_^2 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD3_ = SZ3.* R_^3 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD4_ = SZ4.* R_^4 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD5_ = SZ5.* R_^5 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD6_ = SZ6.* R_^6 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-% MD7_ = SZ7.* R_^7 .* ( (1-gam) .* (1-Theta) ) ./( (1-(1-gam) .* (1-Theta)) - lambdaB_ );
-%
-% mD1_ = ( MD1_ + (1-gam)*(1-Theta)*R_^1 )/( 1 - (1-gam)*(1-Theta) );
-% mD2_ = ( MD2_ + (1-gam)*(1-Theta)*R_^2 )/( 1 - (1-gam)*(1-Theta) );
-% mD3_ = ( MD3_ + (1-gam)*(1-Theta)*R_^3 )/( 1 - (1-gam)*(1-Theta) );
-% mD4_ = ( MD4_ + (1-gam)*(1-Theta)*R_^4 )/( 1 - (1-gam)*(1-Theta) );
-% mD5_ = ( MD5_ + (1-gam)*(1-Theta)*R_^5 )/( 1 - (1-gam)*(1-Theta) );
-% mD6_ = ( MD6_ + (1-gam)*(1-Theta)*R_^6 )/( 1 - (1-gam)*(1-Theta) );
-% mD7_ = ( MD7_ + (1-gam)*(1-Theta)*R_^7 )/( 1 - (1-gam)*(1-Theta) );
-%
-%
-% kappa = (1-gam)*betta*MD1_/(1+(1-gam)*betta*MD1_);
-% MV_ = ( 1 - gam*(1-kappa)*(1-(1-gam)*(1-Theta)) )/(1-gam);
-% mv = log( MV_ );
-% mV_ = MV_ / ( 1 - (1-gam)*(1-Theta) ) - (1-kappa);
-% RK_ = 1/((1-gam)*betta*MV_);
-% Z_ = RK_-1+deltaSS;
-% K_over_Y = alp/Z_;
-% I_over_Y = deltaSS * K_over_Y;
-% C_over_Y = 1 - I_over_Y;
-% H = H_bar;
-% H_ = H;
-% Y_ = ( Ass * H_ ) * K_over_Y ^ ( alp / ( 1 - alp ) );
-% K_ = K_over_Y * Y_;
-% k = log( K_ );
-% inv = log(deltaSS) + k;
-% C_ = C_over_Y * Y_;
-% c = log( C_ );
-% Xjr = C_;
-% UX_ = - (C_ - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
-% lambdaX = UX_ / ( 1 - betta*( (1-gam_jr) ) );
-% sum_mD = mD1_ + mD2_ + mD3_ + mD4_ + mD5_ + mD6_ + mD7_;
-% sum_MD = MD1_ + MD2_ + MD3_ + MD4_ + MD5_ + MD6_ + MD7_;
-% AUXBD = sum_mD/(1+mV_*R_/(1-kappa));
-% AUXBS = (mV_*RK_/(1-kappa))/(1+mV_*R_/(1-kappa));
-% AUXED = (1/nubar)*( log( 1 - kappa/kappa_new ) )*( ((MV_*R_/(1-kappa))/(1+mV_*R_/(1-kappa)))*sum_mD - sum_MD );
-% AUXES = (1/nubar)*( log( 1 - kappa/kappa_new ) )*((MV_*RK_/(1-kappa))/(1+mV_*R_/(1-kappa)));
-% D = K_*(RK_ - 1 - (R_-1)*AUXBS - (1-kappa)*AUXES)/(1-(1-kappa)*AUXED + (R_-1)*AUXBD);
-% E_ = AUXED*D - AUXES*K_;
-% B_ = AUXBD*D + AUXBS*K_;
-% b = log( B_ );
-%
-% spread = RK_ - R_;
-%
-% Y = Y_;
-% E_rate = E_/(K_-B_);
-% D_rate = D/(K_-B_);
-%
-% Vhat_ = ( RK_*K_ - (R_)*B_ )/(1-kappa);
-% mV_*Vhat_ + sum_mD*D - B_
