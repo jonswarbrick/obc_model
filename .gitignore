@@ -1,5 +1,7 @@
 results_irf/**
 results_sim/**
+calibrations/**
+plot_files/**
 model/all_models/
 model/all_models.m
 model/codegen/
@@ -19,6 +21,7 @@ model/~*
 *.ini
 *.zip
 *.eps
+*.png
 *.jnl
 *.txt
 *.mat
