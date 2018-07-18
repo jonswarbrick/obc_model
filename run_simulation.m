@@ -99,9 +99,12 @@ catch
 end
 clear;
 
+cd('../')
+   
 
 %% Time-series simulation
 
+cd('model')
 clear;
 
 try 
@@ -123,8 +126,13 @@ catch
    disp('****------- Error Error solving simulated time-series (OBC model) -------****');
 end
 
+
+cd('../')
+   
+
 %% Clean up
 
+cd('model')  
 warning('off','all')
 delete *_IRF_*
 delete *Temp*
