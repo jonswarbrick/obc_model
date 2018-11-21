@@ -14,7 +14,7 @@ if exist('calibrations')~=7
     mkdir('calibrations')
 end
 
-opts.dynareOBC_options = ' NoCubature OrderOverride=2 FirstOrderConditionalCovariance TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse';
+opts.dynareOBC_options = ' OrderOverride=2 TimeToEscapeBounds=60 TimeToReturnToSteadyState=20 omega=10000 CompileSimulationCode Sparse MLVSimulationMode=1';
 
 % 1 = rbc, 2 = gkq, 3 = obc
 models_to_run = [ 1 , 2 , 3 ];
@@ -74,7 +74,7 @@ for current_model=1:num_models
 
     %% Initial run
     eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),'_cal ',char(opts.dynareOBC_options(1,:)),';'));
-    Y = log(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:));
+    Y = dynareOBC_.MLVSimulationWithBounds.y;
     [~,Y] = hpfilter(Y,1600);
     spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 
@@ -140,7 +140,7 @@ for current_model=1:num_models
                 save('../opts.mat','parameter_sigma_a','parameter_rhoA','parameter_Theta','-append');
                 save('settings_file.mat','options');
                 eval(horzcat('dynareOBC ',char(opts.models(models_to_run(current_model))),'_cal ',char(opts.dynareOBC_options(1,:)),';'));
-                Y = log(oo_.endo_simul(strmatch('Y',M_.endo_names,'exact'),:));
+                Y = dynareOBC_.MLVSimulationWithBounds.y;
                 [~,Y] = hpfilter(Y,1600);
                 spread = (oo_.endo_simul(strmatch('spread',M_.endo_names,'exact'),:));
 

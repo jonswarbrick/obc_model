@@ -6,7 +6,6 @@ opt.size_var = size(opt.variables);
 opt.num_var = opt.size_var(1);
 opt.size_epsshocks = size(opt.epsshock);
 opt.number_shocks = opt.size_epsshocks(1);
-opt.num_periods = 40;
 
 index = 0;
 for ii=1:opt.num_datasets
@@ -16,63 +15,46 @@ for ii=1:opt.num_datasets
     for jj = 1:opt.number_shocks
         curr_shock = strtrim(opt.epsshock(jj,:));
         % Y
-        eval( strcat('offset.Y(jj,:) = dynareOBC_.IRFOffsets.Y_',curr_shock,';') );
-        if max(abs(eval( strcat('oo_.irfs.Y_',curr_shock) )))>1e-9
-            eval( strcat('irfsAroundZero.Y(jj,:) = oo_.irfs.Y_',curr_shock,';') );
+        eval( strcat('offset.y(jj,:) = dynareOBC_.IRFOffsets.y_',curr_shock,';') );
+        if max(abs(eval( strcat('oo_.irfs.y_',curr_shock) )))>1e-9
+            eval( strcat('irfsAroundZero.y(jj,:) = oo_.irfs.y_',curr_shock,';') );
         else
-            irfsAroundZero.Y(jj,:) = zeros(1,60);
+            irfsAroundZero.Y(jj,:) = zeros(1,length(offset.y(jj,:)));
         end
         % I
         eval( strcat('offset.inv(jj,:) = dynareOBC_.IRFOffsets.inv_',curr_shock,';') );
         if max(abs(eval( strcat('oo_.irfs.inv_',curr_shock) )))>1e-9
             eval( strcat('irfsAroundZero.inv(jj,:) = oo_.irfs.inv_',curr_shock,';') );
         else
-            irfsAroundZero.inv(jj,:) = zeros(1,60);
+            irfsAroundZero.inv(jj,:) = zeros(1,length(offset.inv(jj,:)));
         end
         % H
-        eval( strcat('offset.H(jj,:) = dynareOBC_.IRFOffsets.H_',curr_shock,';') );
-        if max(abs(eval( strcat('oo_.irfs.H_',curr_shock) )))>1e-9
-            eval( strcat('irfsAroundZero.H(jj,:) = oo_.irfs.H_',curr_shock,';') );
+        eval( strcat('offset.h(jj,:) = dynareOBC_.IRFOffsets.h_',curr_shock,';') );
+        if max(abs(eval( strcat('oo_.irfs.h_',curr_shock) )))>1e-9
+            eval( strcat('irfsAroundZero.h(jj,:) = oo_.irfs.h_',curr_shock,';') );
         else
-            irfsAroundZero.H(jj,:) = zeros(1,60);
+            irfsAroundZero.H(jj,:) = zeros(1,length(offset.h(jj,:)));
         end
         % spread
         eval( strcat('offset.spread(jj,:) = dynareOBC_.IRFOffsets.spread_',curr_shock,';') );
         if max(abs(eval( strcat('oo_.irfs.spread_',curr_shock) )))>1e-9
             eval( strcat('irfsAroundZero.spread(jj,:) = oo_.irfs.spread_',curr_shock,';') );
         else
-            irfsAroundZero.spread(jj,:) = zeros(1,60);
+            irfsAroundZero.spread(jj,:) = zeros(1,length(offset.spread(jj,:)));
         end
         % D
-        if strcmp(dynareOBC_.BaseFileName,'rbc_psi') || strcmp(dynareOBC_.BaseFileName,'rbc_a')
-            offset.D_rate(jj,:) = zeros(1,60);
-            irfsAroundZero.D_rate(jj,:) = zeros(1,60);
-        elseif strcmp(dynareOBC_.BaseFileName,'obc_psi') || strcmp(dynareOBC_.BaseFileName,'obc_a')
-            eval( strcat('temp_Q = exp(dynareOBC_.IRFOffsets.q_',curr_shock,') + exp(oo_.irfs.q_',curr_shock,');'));
-            eval( strcat('temp_K = exp(dynareOBC_.IRFOffsets.k_',curr_shock,') + exp(oo_.irfs.k_',curr_shock,');'));
-            eval( strcat('temp_B = exp(dynareOBC_.IRFOffsets.b_',curr_shock,') + exp(oo_.irfs.b_',curr_shock,');'));
-            eval( strcat('temp_D = (dynareOBC_.IRFOffsets.D_',curr_shock,') + (oo_.irfs.D_',curr_shock,');'));
-            eval( strcat('offset.D_rate(jj,:) = dynareOBC_.IRFOffsets.D_',curr_shock,'./( (exp(dynareOBC_.IRFOffsets.q_',curr_shock,')).*(exp(dynareOBC_.IRFOffsets.k_',curr_shock,'))- exp(dynareOBC_.IRFOffsets.b_',curr_shock,') );'));
-            irfsAroundZero.D_rate(jj,:) = max(0,temp_D ./ (temp_Q.*temp_K - temp_B)) - offset.D_rate(jj,:);
+        eval( strcat('offset.D_rate(jj,:) = dynareOBC_.IRFOffsets.D_rate_',curr_shock,';') );
+        if max(abs(eval( strcat('oo_.irfs.D_rate_',curr_shock) )))>1e-9
+            eval( strcat('irfsAroundZero.D_rate(jj,:) = oo_.irfs.D_rate_',curr_shock,';') );
         else
-            eval( strcat('offset.D_rate(jj,:) = dynareOBC_.IRFOffsets.D_rate_',curr_shock,';') );
-            if max(abs(eval( strcat('oo_.irfs.D_rate_',curr_shock) )))>1e-9
-                eval( strcat('irfsAroundZero.D_rate(jj,:) = oo_.irfs.D_rate_',curr_shock,';') );
-            else
-                irfsAroundZero.D_rate(jj,:) = zeros(1,60);
-            end
+            irfsAroundZero.D_rate(jj,:) = zeros(1,length(offset.D_rate(jj,:)));
         end
         % E
-        if strcmp(dynareOBC_.BaseFileName,'rbc_psi') || strcmp(dynareOBC_.BaseFileName,'rbc_a')
-            offset.E_rate(jj,:) = zeros(1,60);
-            irfsAroundZero.E_rate(jj,:) = zeros(1,60);
+        eval( strcat('offset.E_rate(jj,:) = dynareOBC_.IRFOffsets.E_rate_',curr_shock,';') );
+        if max(abs(eval( strcat('oo_.irfs.E_rate_',curr_shock) )))>1e-9
+            eval( strcat('irfsAroundZero.E_rate(jj,:) = oo_.irfs.E_rate_',curr_shock,';') );
         else
-            eval( strcat('offset.E_rate(jj,:) = dynareOBC_.IRFOffsets.E_rate_',curr_shock,';') );
-            if max(abs(eval( strcat('oo_.irfs.E_rate_',curr_shock) )))>1e-9
-                eval( strcat('irfsAroundZero.E_rate(jj,:) = oo_.irfs.E_rate_',curr_shock,';') );
-            else
-                irfsAroundZero.E_rate(jj,:) = zeros(1,60);
-            end
+            irfsAroundZero.E_rate(jj,:) = zeros(1,length(offset.E_rate(jj,:)));
         end
     end
     jj = 1;
@@ -84,9 +66,9 @@ for ii=1:opt.num_datasets
          end
         curr_var = strtrim(opt.variables(jj,:));
         plot_type = strtrim(opt.var_paper_plot(jj,:));
-        model.abs(:,:,index,jj) = eval(['irfs.',curr_var,'(:,1:60)']);
-        model.aroundZero(:,:,index,jj) = eval(['irfsAroundZero.',curr_var,'(:,1:60)']);
-        model.paper(:,:,index,jj) = eval([plot_type,'.',curr_var,'(:,1:60)']);
+        model.abs(:,:,index,jj) = eval(['irfs.',curr_var,'(:,1:',num2str(opt.num_periods),')']);
+        model.aroundZero(:,:,index,jj) = eval(['irfsAroundZero.',curr_var,'(:,1:',num2str(opt.num_periods),')']);
+        model.paper(:,:,index,jj) = eval([plot_type,'.',curr_var,'(:,1:',num2str(opt.num_periods),')']);
     end
 end
 save('data.mat','model')

@@ -4,8 +4,8 @@ clear;close all;
 %% Prepare Data For Plots -- User Settings
 opt.epsshock = char('eps_psi');
 opt.shock_shortname = char('KQ');
-opt.variables = char('Y','inv','H','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
-opt.var_paper_plot = char('relAroundZero','irfsAroundZero','relAroundZero','irfsAroundZero','irfs','irfs');
+opt.variables = char('y','inv','h','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
+opt.var_paper_plot = char('irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero');
 opt.names = char('$Y$','$I$','$H$','$\Delta$','$D/N$','$\quad E/N$');
 opt.no_rows_sub_plots = 2;
 opt.no_cols_sub_plots = 3;
@@ -19,6 +19,7 @@ opt.data_files = {...
     ,'rbc_KQ5pc'...
     ,'gkq_KQ5pc'...
      };
+opt.num_periods = 40;
 opt.type_desc = '5pc';
 opt.plot_size = [230 250 500 350];
 opt.nolegend = 0;
@@ -27,8 +28,8 @@ clear;
 %% Prepare Data For Plots -- User Settings
 opt.epsshock = char('eps_psi');
 opt.shock_shortname = char('KQ');
-opt.variables = char('Y','inv','H','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
-opt.var_paper_plot = char('relAroundZero','irfsAroundZero','relAroundZero','irfsAroundZero','irfs','irfs');
+opt.variables = char('y','inv','h','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
+opt.var_paper_plot = char('irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero');
 opt.names = char('$Y$','$I$','$H$','$\Delta$','$D/N$','$\quad E/N$');
 opt.no_rows_sub_plots = 2;
 opt.no_cols_sub_plots = 3;
@@ -42,6 +43,7 @@ opt.data_files = {...
     ,'rbc_posKQ5pc'...
     ,'gkq_posKQ5pc'...
      };
+opt.num_periods = 40;
 opt.type_desc = 'pos5pc';
 opt.plot_size = [230 250 500 350];
 opt.nolegend = 0;
@@ -50,8 +52,8 @@ clear;
 %% Prepare Data For Plots -- User Settings
 opt.epsshock = char('epsA');
 opt.shock_shortname = char('A');
-opt.variables = char('Y','inv','H','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
-opt.var_paper_plot = char('relAroundZero','irfsAroundZero','relAroundZero','irfsAroundZero','irfs','irfs');
+opt.variables = char('y','inv','h','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
+opt.var_paper_plot = char('irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero');
 opt.names = char('$Y$','$I$','$H$','$\Delta$','$D/N$','$\quad E/N$');
 opt.no_rows_sub_plots = 2;
 opt.no_cols_sub_plots = 3;
@@ -65,6 +67,7 @@ opt.data_files = {...
     ,'rbc_A1sd'...
     ,'gkq_A1sd'...
      };
+opt.num_periods = 40;
 opt.type_desc = '1sd';
 opt.plot_size = [230 250 500 350];
 opt.nolegend = 0;
@@ -74,8 +77,8 @@ clear;
 %% Prepare Data For Plots -- User Settings
 opt.epsshock = char('epsA');
 opt.shock_shortname = char('A');
-opt.variables = char('Y','inv','H','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
-opt.var_paper_plot = char('relAroundZero','irfsAroundZero','relAroundZero','irfsAroundZero','irfs','irfs');
+opt.variables = char('y','inv','h','spread','D_rate','E_rate'); % rel = % deviation; irfs = level deviation, ; irfsAroundZero = level around 0
+opt.var_paper_plot = char('irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero','irfsAroundZero');
 opt.names = char('$Y$','$I$','$H$','$\Delta$','$D/N$','$\quad E/N$');
 opt.no_rows_sub_plots = 2;
 opt.no_cols_sub_plots = 3;
@@ -89,6 +92,7 @@ opt.data_files = {...
     ,'rbc_negA1sd'...
     ,'gkq_negA1sd'...
      };
+opt.num_periods = 40;
 opt.type_desc = 'neg1sd';
 opt.plot_size = [230 250 500 350];
 opt.nolegend = 0;

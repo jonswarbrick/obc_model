@@ -1,4 +1,4 @@
-var k a nub mus mue Thetax QE E q logit_delta c r inv spread psi Y H D_rate E_rate Xjr lambdaX;
+var k a nub mus mue Thetax QE E q logit_delta c r inv spread psi h Xjr lambdaX;
 
 varexo epsA;
 
@@ -69,21 +69,21 @@ model;
     # Q = exp( q );
     # lead_Q = exp( q(+1) );
     # lag_Q = exp( q(-1) );
-    Y = C+I;
+    # Y = C+I;
     # lead_Y = lead_C+lead_I;
-    # lead_H = H(+1);
+    # y = log( Y );
+    # H = exp( h );
+    # lead_H = exp( h(+1) );
     # UH = - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * theta_jr*varrho*Xjr*H^(theta_jr-1);
     # UX =  - (C - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
     # UC = (C - varrho*H^theta_jr*Xjr)^(-sigma_c);
     # lead_UC = (lead_C - varrho*lead_H^theta_jr*Xjr(+1))^(-sigma_c);
     # lambdaC = UC + lambdaX*gam_jr*Xjr/C;
     # lead_lambdaC = lead_UC + lambdaX(+1)*gam_jr*Xjr(+1)/lead_C;
-    Xjr = C^gam_jr * Xjr(-1)^(1-gam_jr);
-    lambdaX = UX + betta * (1-gam_jr) * lambdaX(+1) * Xjr(+1) / Xjr;
 	# lead_Lambda = betta*lead_lambdaC/lambdaC;
     # Z = alp*Y/(psi*lag_K);
     # lead_Z = alp*lead_Y/(psi(+1)*K);
-	# W = (1-alp)*Y/H;
+	# w = log(1-alp) + y - h;
 	# R = exp( r );
 	# lag_R = exp( r(-1) );
     # S = Q*K;
@@ -107,6 +107,9 @@ model;
     # RE =(Z + (1 - delta)*QE)/QE(-1);
     # lead_RE =(lead_Z + (1 - lead_delta)*QE(+1))/QE;
     # D = (1-sigmaB)*(RK*lag_S-lag_R*lag_B - RE*QE(-1)*E(-1));
+    # D_rate = D/N;
+    # E_rate = (E-E(-1))/N;
+    # lev = k - log(N);
 
 % Model equations
 
@@ -114,8 +117,10 @@ model;
     1=Q*(1-Phi*(I/lag_I-1)^2 - (I/lag_I)*2*Phi*(I/lag_I-1))+lead_Lambda*2*Phi*(lead_I/I-1)*(lead_I/I)^2*lead_Q;
  
     lead_Lambda*R=1;
-    log(Y) = (1-alp)*((a) + log(H)) + alp*( k(-1) + log(psi));
-    UH/lambdaC = - W;
+    y = (1-alp)*((a) + h) + alp*( k(-1) + log(psi));
+    Xjr = C^gam_jr * Xjr(-1)^(1-gam_jr);
+    lambdaX = UX + betta * (1-gam_jr) * lambdaX(+1) * Xjr(+1) / Xjr;
+    log( -UH/lambdaC ) = w;
 
     N = (sigmaB + xiB)*RK*lag_S - lag_R*sigmaB*lag_B - RE*sigmaB*QE(-1)*E(-1);
     mus = lead_Lambda*lead_Omega*spread;
@@ -124,8 +129,6 @@ model;
     Thetax = Theta*(1 + epsilon*xE + kappa_GK*xE^2/2);
     (mus+mue*xE)*DThetax = mue * Thetax;
     lead_Lambda*lead_RE = 1;
-    D_rate = D/N;
-    E_rate = (E-E(-1))/N;
     spread = lead_RK - R;
 
     a-log(Ass) = rhoA*(a(-1)-log(Ass))+sigma_a*epsA;
@@ -145,17 +148,18 @@ steady_state_model;
     Z_ = alp/K_by_Y;
     I_by_Y = deltaSS * K_by_Y;
     C_by_Y = 1 - I_by_Y;
-    H = H_bar;
-    Y = ( Ass * H ) * K_by_Y ^ ( alp / ( 1 - alp ) );
-    K_ = K_by_Y * Y;
+    h = log( H_bar );
+    H_ = H_bar;
+    Y_ = ( Ass * H_ ) * K_by_Y ^ ( alp / ( 1 - alp ) );
+    K_ = K_by_Y * Y_;
     k = log( K_ );
-    C_ = C_by_Y * Y;
+    C_ = C_by_Y * Y_;
     c = log( C_ );
     Xjr = C_;
-    UX_ =  - (C_ - varrho*H^theta_jr*Xjr)^(-sigma_c) * varrho * H^(theta_jr);
+    UX_ =  - (C_ - varrho*H_^theta_jr*Xjr)^(-sigma_c) * varrho * H_^(theta_jr);
     lambdaX = UX_ / ( 1 - betta*( (1-gam_jr) ) );
-    inv = log( I_by_Y * Y );
-    I_ = I_by_Y * Y;
+    inv = log( I_by_Y * Y_ );
+    I_ = I_by_Y * Y_;
 
     RK_ = (Z_ + (1 - deltaSS));
     RE_ = R_;
@@ -172,8 +176,6 @@ steady_state_model;
     mus = betta*Omega_*spread;
     nub = Omega_;
     D_ = (1-sigmaB)*(RK_*S_-R_*(S_-N_-QE*E) - RE_*QE*E);
-    D_rate = D_/N_;
-    E_rate = 0;
 
 end;
 
@@ -184,4 +186,4 @@ shocks;
     var epsA = 1; 
 end;
 
-stoch_simul( nograph , replic = 256, order = 3, irf = 60, periods = 0 , irf_shocks = ( epsA ) );
+stoch_simul( nograph , replic = 2000, drop = 400, order = 3, irf = 150, periods = 0 , irf_shocks = ( epsA ) ) y inv h spread D_rate E_rate lev;
