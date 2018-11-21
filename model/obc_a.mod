@@ -37,7 +37,7 @@ rho = betta * ( 1 - 1 / ( 1 + betta^(-1) + betta^(-2) + betta^(-3) + betta^(-4) 
 
 Theta=0.669734151867773;
 Phi=2;
-sigma_a = 0.0060626464427887;
+sigma_a = 0.0060729167797153;
 sigma_psi = 0;
 sigma_delta = .9;
 

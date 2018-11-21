@@ -36,7 +36,7 @@ kappaSS=.05;
 
 Theta=0;
 Phi=2;
-sigma_a = 0.0060626464427887;
+sigma_a = 0.0061201851813039 ;
 sigma_psi = 0.00001;
 sigma_delta = .9;
 

@@ -37,9 +37,9 @@ kappa_GK = 13.41;
 gam=1e-8;
 kappaSS=.05;
 
-Theta=0.893717341213108;
+Theta=0.8451152617328965;
 Phi=2;
-sigma_a = 0.0060626464427887;
+sigma_a = 0.0058104622797242 ;
 sigma_psi = 0.00001;
 sigma_delta = .9;
 
