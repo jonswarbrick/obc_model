@@ -108,21 +108,23 @@ model;
 # V = MV*Vhat + MD*D_star(-1);
 # D = D_star/R - rho*D_star(-1);
 # E = ( D + S - B )/(1-kappa) - Vhat;
-# lambdaD = kappa - (1-gam)*(1-kappa)*lead_Lambda*lead_MD*R;
+# lambdaE = 1 - lead_Xi * lead_RK;
+# lambdaD = kappa - lambdaE - (1-gam)*(1-kappa)*lead_Lambda*lead_MD*R;
 # N = S - B;
-# D_rate = D/N;
-# E_rate = E/N;
-# lev = k - log(Vhat);
+# D_rate = D/Vhat;
+# E_rate = E/Vhat;
+# lev = q + k - log(Vhat);
 
 kappa = kappa_new*( 1 - exp(-nubar*E/V ) );
 
 MD = rho*(1-gam)*(  (1-Theta)*lambdaB +  lead_Lambda * lead_MD * R *( 1-(1-gam)*(1-Theta) ) ) / ( 1-(1-gam)*(1-Theta) - lambdaB );
 (1-gam)*(lead_Lambda)*( lead_MV/MV )*R*(1-kappa)/(1-kappa(+1)) + lambdaB / (1-(1-gam)*(1-Theta)) = 1;
-1 = lead_Xi*lead_RK;
 Xjr = C^gam_jr * Xjr(-1)^(1-gam_jr);
 lambdaX = UX + betta * (1-gam_jr) * lambdaX(+1) * Xjr(+1) / Xjr;
 
-0 = min( D , lambdaD );
+0 = min( D_rate , lambdaD );
+%0 = min( E_rate , lambdaE );
+lambdaE = 0;
 0 = min( mV*Vhat + mD*D_star(-1) - B , lambdaB);
 
 spread = lead_RK - R;
@@ -179,7 +181,6 @@ steady_state_model;
     Vhat_ = ( RK_*K_ - R_ * mD_ * D_star )/ (1-kappa+R_*mV_);
     b = log( mV_ * Vhat_ + mD_ * D_star );
     spread = RK_ - R_;
-
 end;
 
 

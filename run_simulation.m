@@ -104,6 +104,12 @@ cd('../')
 
 %% TEST
 
+cd('model')
+    dynareOBC obc_psi OrderOverride=2 shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode MLVSimulationMode=1;
+    save('../results_irf/obc_KQ5pc_fast.mat')
+cd('../')
+
+%%
    
 try 
     dynareOBC rbc_psi OrderOverride=2 shockscale=-5000 TimeToEscapeBounds=40 omega=10000 CompileSimulationCode MLVSimulationMode=1;

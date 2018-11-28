@@ -1,41 +1,12 @@
 clear; close all;
-
-filename = 'baron_bank_data.xlsx';
-
-quarterly_baron_data = xlsread(filename,1,'B42:K235');
-annual_baron_data = xlsread(filename,1,'B3:K40');
-
-annual_time = [ datetime(1927,10,01) , datetime(1927,10,01) + calyears(1:38)]';
-quarterly_time = [ datetime(1965,10,01) , datetime(1965,10,01) + 3*calmonths(1:193)]';
-
-dividend_smoothed = quarterly_baron_data(:,4);
-repurchase_smoothed = quarterly_baron_data(:,8);
-new_equity_smoothed = quarterly_baron_data(:,10);
-new_equity_smoothed_old = [ annual_baron_data(:,10); new_equity_smoothed(1)];
-
-%% Plot equity issuance
-if exist('plot_images')~=7
-    mkdir('plot_images')
-end
-
-h = figure;
-set(h, 'Position', [50 , 50, 500, 300]);
-plot(quarterly_time,100*new_equity_smoothed,'color',[0,.4,.8],'LineWidth',1.5);hold on; 
-plot(annual_time,100*new_equity_smoothed_old,'color',[0,.4,.8],'LineWidth',1.5);
-recessionplot;
-recessionplot;
-ylabel('\% of book equity, annualized','Interpreter','latex')
-datetick('x','YYYY')
-xmin = datenum(1929,12,03);xmax = datenum(2013,11,01);
-xlim([xmin xmax])
-ylim([0 50])
-set(gca,'TickLabelInterpreter','latex')
-img_filename = strcat('plot_images\equity_issuance');
-print(h,img_filename,'-r300','-dpng')
-print(h,img_filename,'-r300','-depsc')
+warning('off','all')
 
 %% Dividend and Equity moments
 load('rawData.mat')
+quarterly_baron_data = xlsread('baron_bank_data.xlsx',1,'B42:K235');
+dividend_smoothed = quarterly_baron_data(:,4);
+repurchase_smoothed = quarterly_baron_data(:,8);
+new_equity_smoothed = quarterly_baron_data(:,10);
 
 indexDate = '01/01/01';
 pop = fints( freddata.pop.Data(:,1) , freddata.pop.Data(:,2) , 'pop'); 
@@ -56,13 +27,13 @@ D = dividend_smoothed(72:end)+repurchase_smoothed(72:end);
 % Cross correlations
 corr_coeff = corrcoef([ Y , D , E ]);
 disp('**-------------------------------------------------------------------------------**');
-disp('Correlation Coefficients');
+disp('Banking variables correlation coefficients');
 disp(table(corr_coeff(:,1),corr_coeff(:,2),corr_coeff(:,3),'VariableNames',{'Y','D','E'},'RowNames',{'Y','D','E'}));
 
 % Moments
 moments = [ mean([ D , E ])' std([ D , E ])' skewness([ D , E ])' kurtosis([ D , E ])' ];
-disp('**-------------------------------------------------------------------------------**');
-disp('Moments');
+disp('**-------------------------- -----------------------------------------------------**');
+disp('Banking variables moments');
 disp(table(moments(:,1),moments(:,2),moments(:,3),moments(:,4),'VariableNames',{'Mean','StdDev','Skewness','Kurtosis'},'RowNames',{'D','E'}));
 disp('**-------------------------------------------------------------------------------**');
 
@@ -93,8 +64,6 @@ spread = spread('07/01/1983::07/01/2016');
 [~,hp.i] = hpfilter(invest(142:end),1600);
 S_qtly = 100*((1+0.01*((fts2mat(toquarterly(spread,'CalcMethod','v21x'))))).^(1/4)-1);
 S = 100*((1+0.01*((fts2mat(spread)))).^(1/4)-1);
-SD_y = std(hp.y);
-[ACF_y,~,~] = autocorr(hp.y,1);
 
 all_data = [ hp.y(1:end-1) , hp.c(1:end-1) , hp.i(1:end-1) , S_qtly(1:end-1)  ]; 
 
@@ -117,12 +86,8 @@ tab_paper = table(paper_data(:,1),paper_data(:,2),...
     'VariableNames',variables,'RowNames',{'corr','sd','skew'});
 
 disp('**-------------------------------------------------------------------------------**');
-disp('Table for paper');
+disp('Moments for table 1');
 disp(tab_paper);
 disp('**-------------------------------------------------------------------------------**');
 
-disp(horzcat('S.D. Y = ',num2str(SD_y)));
-disp(horzcat('AC(1) Y = ',num2str(ACF_y(2))));
-disp(horzcat('mean spread = ',num2str(mean((1+0.01*((fts2mat(spread)))).^(1/4)-1))));
-disp(horzcat('S.D. spread = ',num2str(std((1+0.01*((fts2mat(spread)))).^(1/4)-1))));
-
+warning('on','all')

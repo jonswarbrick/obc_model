@@ -85,6 +85,7 @@ subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,1),
     plot(100*model.paper(1,1:opt.num_periods,3,1),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1); 
     gap = [' '; ' '];
     xlabel(gap);
+    ylabel('\% deviation','Interpreter','latex')
     set(gca,'TickLabelInterpreter','latex')
     grid off
     titlename=strtrim(opt.names(1,:));
@@ -106,7 +107,7 @@ subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,3),
     gap = [' '; ' '];
     xlabel(gap);
     if opt.plot_num==1
-    ylim([-2.1 -1]);
+    ylim([-2.2 -1]);
     elseif opt.plot_num==2
     ylim([1 2.3]);
     elseif opt.plot_num==3
@@ -124,9 +125,8 @@ subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,4),
     plot(100*model.paper(1,1:opt.num_periods,3,4),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);
     gap = [' '; ' '];
     xlabel(gap);
-    if opt.plot_num==1
-    ylim([-.05 .5]);
-    elseif opt.plot_num==2
+    ylabel('\% pt deviation','Interpreter','latex')
+    if opt.plot_num==2
     ylim([-.4 .04]);
     elseif opt.plot_num==3
     ylim([-.1 .02]);
@@ -138,30 +138,9 @@ subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,4),
     titlename=strtrim(opt.names(4,:));
     title(titlename,'Interpreter','latex')
 subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,5),
-    yyaxis left
     plot(100*model.paper(1,1:opt.num_periods,1,5),'Color',[0 .6 .4],'LineStyle','-','LineWidth',1);  hold on;
     plot(100*model.paper(1,1:opt.num_periods,2,5),'color',[.2 .4 .6],'LineStyle','--', 'LineWidth',1);
-    if opt.plot_num==1
-    ylim([-.005 .1]);
-    elseif opt.plot_num==2
-    ylim([-.05 1]);
-    elseif opt.plot_num==3
-    ylim([-.005 .2]);
-    elseif opt.plot_num==4
-    ylim([-.005 .2]);
-    end
-    set(gca,'YColor',[0 0 0]);
-    yyaxis right
-    plot(100*model.paper(1,1:opt.num_periods,3,5),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1); 
-    if opt.plot_num==1
-    ylim([-.05 2]);
-    elseif opt.plot_num==2  
-    ylim([-.05 2]);
-    elseif opt.plot_num==3
-    ylim([-.05 2]);
-    elseif opt.plot_num==4
-    ylim([-.05 2]);
-    end
+    plot(100*model.paper(1,1:opt.num_periods,3,5),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);
     gap = [' '; ' '];
     xlabel(gap);
     set(gca,'TickLabelInterpreter','latex')
@@ -173,28 +152,28 @@ subplot(opt.no_rows_sub_plots,opt.no_cols_sub_plots,6),
     yyaxis left
     plot(100*model.paper(1,1:opt.num_periods,1,6),'Color',[0 .6 .4],'LineStyle','-','LineWidth',1);  hold on;
     plot(100*model.paper(1,1:opt.num_periods,2,6),'color',[.2 .4 .6],'LineStyle','--', 'LineWidth',1);
-    ylim([-.1 .1]);
+    ylim([-.5 .5]);
     set(gca,'YColor',[0 0 0]);
     yyaxis right
-    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);    
+    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1); 
+    ylim([-2.5 2.5]);   
     elseif opt.plot_num==2
     plot(100*model.paper(1,1:opt.num_periods,1,6),'Color',[0 .6 .4],'LineStyle','-','LineWidth',1);  hold on;
     plot(100*model.paper(1,1:opt.num_periods,2,6),'color',[.2 .4 .6],'LineStyle','--', 'LineWidth',1);
-    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);    
-    ylim([-.1 1.5]);
+    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);  
     elseif opt.plot_num==3
     plot(100*model.paper(1,1:opt.num_periods,1,6),'Color',[0 .6 .4],'LineStyle','-','LineWidth',1);  hold on;
     plot(100*model.paper(1,1:opt.num_periods,2,6),'color',[.2 .4 .6],'LineStyle','--', 'LineWidth',1);
     plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);    
-    ylim([-.1 .25]);
     elseif opt.plot_num==4
     yyaxis left
     plot(100*model.paper(1,1:opt.num_periods,1,6),'Color',[0 .6 .4],'LineStyle','-','LineWidth',1);  hold on;
     plot(100*model.paper(1,1:opt.num_periods,2,6),'color',[.2 .4 .6],'LineStyle','--', 'LineWidth',1);
-    ylim([-.01 .01]);
+    ylim([-.025 .025]);
     set(gca,'YColor',[0 0 0]);
     yyaxis right
-    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1);    
+    plot(100*model.paper(1,1:opt.num_periods,3,6),'Color',[0.6 0 0],'LineStyle',':','LineWidth',1); 
+    ylim([-.25 .25]);   
     end
     gap = [' '; ' '];
     xlabel(gap);
