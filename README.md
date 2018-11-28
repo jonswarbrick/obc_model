@@ -15,7 +15,7 @@ For calibration:
 Data:
 - data/fetch_data.m - fetches data on real economy from FRED
 - data/run_moments.m - report empirical moments for paper
--
+
 ## Additional software
 
 In combination with the supplied code, the following software was used to generate the results in the paper:
